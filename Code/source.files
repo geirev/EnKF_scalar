@@ -1,0 +1,30 @@
+MODULES = \
+	m_aaprojection.F90\
+	m_avevar.F90\
+	m_costf.F90\
+	m_cov.F90\
+	m_cyyreg.F90\
+	m_func.F90\
+	m_getalpha.F90\
+	m_getcaseid.F90\
+	m_integrals.F90\
+	m_marginalpdf.F90\
+	m_moments.F90\
+	m_normal.F90\
+	m_omegafact.F90\
+	m_pseudoinv.F90\
+	m_pseudoinv2.F90\
+	m_set_random_seed2.F90\
+	m_steinkern.F90\
+	m_teccostens.F90\
+	m_tecfunc.F90\
+	m_tecjointpdf.F90\
+	m_tecmargpdf.F90\
+	m_tecpdf.F90\
+	m_tecsampini.F90\
+	m_tecstat.F90\
+	m_tecstatIES.F90
+
+F90FILES = \
+	pdf.F90
+
