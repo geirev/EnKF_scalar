@@ -1,12 +1,11 @@
    module m_tecstatIES
    use m_getcaseid
    contains
-   subroutine tecstatIES(fname,esmethod,ave,var,skew,curt,nrsamp,iterations,gradient,beta,sigw)
+   subroutine tecstatIES(fname,esmethod,ave,var,skew,curt,nrsamp,iterations,beta,sigw)
    implicit none
    character(len=*), intent(in) :: fname
    character(len=*), intent(in) :: esmethod
    integer,          intent(in) :: nrsamp
-   integer,          intent(in) :: gradient
    integer,          intent(in) :: iterations
    real,             intent(in) :: ave(0:iterations)
    real,             intent(in) :: var(0:iterations)
@@ -28,7 +27,7 @@
    integer ilen
    character(len=40) caseid
    i=0
-   call getcaseid(caseid,esmethod,1.0,1,nrsamp,gradient,beta,sigw,i)
+   call getcaseid(caseid,esmethod,1.0,1,nrsamp,sigw,i)
 
    totfname(:)=' '
    totfname=trim(fname)//trim(caseid)//'.dat'

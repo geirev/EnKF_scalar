@@ -14,8 +14,8 @@ OPT_FFLAGS = -c -fdefault-real-8
 
 PAR = 
 DEBUG_FFLAGS = -c -g -fdefault-real-8
-FFLAGS =  $(DEBUG_FFLAGS)
 FFLAGS =  $(OPT_FFLAGS)
+FFLAGS =  $(DEBUG_FFLAGS)
 
 # run ulimit -c unlimited
 
@@ -48,19 +48,22 @@ CPP = /usr/bin/cpp
 
 # Rules for running cpp and updating files in $(BUILD) directory
 .H.h:
-	rm -f ./$(BUILD)/$*.h
+	@mkdir -p $(BUILD)
+	@rm -f ./$(BUILD)/$*.h
 	cat MODEL.CPP $*.H | $(CPP) $(CPPFLAGS) > ./$(BUILD)/$*.h
 
 
 .F90.o:
+	@mkdir -p $(BUILD)
 	@rm -f ./$(BUILD)/$*.f90
 	@cat MODEL.CPP $*.F90 | $(CPP) $(CPPFLAGS) > ./$(BUILD)/$*.f90
-	cd ./$(BUILD) ; $(CF90) $(FFLAGS) $(F90FLG) -o $*.o $*.f90  
+	cd $(BUILD) ; $(CF90) $(FFLAGS) $(F90FLG) -o $*.o $*.f90  
 
 .F.o:
-	rm -f ./$(BUILD)/$*.f
-	cat MODEL.CPP $*.F | $(CPP) $(CPPFLAGS) > ./$(BUILD)/$*.f
-	cd ./$(BUILD) ; $(CF77) $(FFLAGS) $(F77FLG) -o $*.o $*.f  
+	@mkdir -p $(BUILD)
+	@rm -f ./$(BUILD)/$*.f
+	@cat MODEL.CPP $*.F | $(CPP) $(CPPFLAGS) > ./$(BUILD)/$*.f
+	cd $(BUILD) ; $(CF77) $(FFLAGS) $(F77FLG) -o $*.o $*.f  
 
 
 
@@ -79,6 +82,7 @@ all: $(TARGET) install
 
 
 $(TARGET): $(INC2) $(OMOD) $(OBJECTS) 
+	@mkdir -p $(BUILD)
 	cd ./$(BUILD) ; $(LD) $(LINKFLAGS) -o $(TARGET) $(OMOD) $(OBJECTS) $(LIBDIR) $(LIBS) 
 
 install:

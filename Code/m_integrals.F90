@@ -1,14 +1,9 @@
 module m_integrals 
+use mod_inistat
 use m_func
 contains
-subroutine integrals(x0,d,siga,sigo,beta,funcmode,maxiesit)
+subroutine integrals(maxiesit)
    implicit none
-   real, intent(in) :: x0
-   real, intent(in) :: d
-   real, intent(in) :: siga
-   real, intent(in) :: sigo
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
    integer, intent(in) :: maxiesit
 
    integer, parameter :: n=10000
@@ -33,7 +28,7 @@ subroutine integrals(x0,d,siga,sigo,beta,funcmode,maxiesit)
 
    do i=1,n-1
       x=xmin+real(i-1)*dx+0.5*dx
-      y=func(x,beta,funcmode)
+      y=func(x)
       jxfunc=(x-x0)**2/siga**2 + (y-d)**2/sigo**2
       intf=intf+dx*exp(-0.5*jxfunc)
       mu=mu+dx*x*exp(-0.5*jxfunc)
@@ -43,7 +38,7 @@ subroutine integrals(x0,d,siga,sigo,beta,funcmode,maxiesit)
 
    do i=1,n-1
       x=xmin+real(i-1)*dx+0.5*dx
-      y=func(x,beta,funcmode)
+      y=func(x)
       jxfunc=(x-x0)**2/siga**2 + (y-d)**2/sigo**2
       sig2=sig2+dx*(x-mu)**2*exp(-0.5*jxfunc)
       skew=skew+dx*(x-mu)**3*exp(-0.5*jxfunc)

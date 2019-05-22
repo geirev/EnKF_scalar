@@ -1,4 +1,6 @@
 module m_cyyreg
+implicit none
+logical, save :: lcyyreg
 contains
 real function cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
    implicit none
@@ -19,6 +21,5 @@ real function cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
       Pyymat=matmul(Pyz,matmul(PIzz,Pzy))
       Cyyreg=Pyymat(1,1)
    endif
-!   print '(a,f10.4)','G*Cxx*G          :',Cyyreg
 end function
 end module

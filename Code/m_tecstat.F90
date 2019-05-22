@@ -2,13 +2,12 @@
    use m_getcaseid
    implicit none
    contains
-   subroutine tecstat(fname,esmethod,nmda,alpha,ave,var,skew,curt,nrsamp,alphageo,gradient,beta,sigw)
+   subroutine tecstat(fname,esmethod,nmda,alpha,ave,var,skew,curt,nrsamp,alphageo,beta,sigw)
    implicit none
    character(len=*), intent(in) :: fname
    character(len=*), intent(in) :: esmethod
    integer,          intent(in) :: nrsamp
    integer,          intent(in) :: nmda
-   integer,          intent(in) :: gradient
    real,             intent(in) :: alphageo
    real,             intent(in) :: beta
    real,             intent(in) :: sigw
@@ -31,7 +30,7 @@
 
 
    i=0
-   call getcaseid(caseid,esmethod,alphageo,nmda,nrsamp,gradient,beta,sigw,i)
+   call getcaseid(caseid,esmethod,alphageo,nmda,nrsamp,sigw,i)
    totfname(:)=' '
    totfname=trim(fname)//trim(caseid)//'.dat'
    print *,'totfnam:',trim(totfname)

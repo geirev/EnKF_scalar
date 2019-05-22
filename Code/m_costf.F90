@@ -1,47 +1,24 @@
 module m_costf
+use mod_inistat
 use m_func
 contains
 
-real function jxfunc(x,x0,siga,d,sigo,beta,funcmode)
+real function jxfunc(x)
    implicit none
    real, intent(in) :: x
-   real, intent(in) :: x0
-   real, intent(in) :: siga
-   real, intent(in) :: d
-   real, intent(in) :: sigo
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
-  
-   jxfunc=(x-x0)**2/siga**2 + (func(x,beta,funcmode)-d)**2/sigo**2
-   
+   jxfunc=(x-x0)**2/siga**2 + (func(x)-d)**2/sigo**2
 end function jxfunc
 
-real function djxfunc(x,x0,siga,d,sigo,beta,funcmode)
+real function djxfunc(x)
    implicit none
    real, intent(in) :: x
-   real, intent(in) :: x0
-   real, intent(in) :: siga
-   real, intent(in) :: d
-   real, intent(in) :: sigo
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
-
-   djxfunc=sigo**2*(x-x0) + siga**2*(func(x,beta,funcmode)-d)*dfunc(x,beta,funcmode)
-
+   djxfunc=sigo**2*(x-x0) + siga**2*(func(x)-d)*dfunc(x)
 end function djxfunc
 
-real function ddjxfunc(x,x0,siga,d,sigo,beta,funcmode)
+real function ddjxfunc(x)
    implicit none
    real, intent(in) :: x
-   real, intent(in) :: x0
-   real, intent(in) :: siga
-   real, intent(in) :: d
-   real, intent(in) :: sigo
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
-
-   ddjxfunc=sigo**2 + siga**2*dfunc(x,beta,funcmode)**2
-
+   ddjxfunc=sigo**2 + siga**2*dfunc(x)**2
 end function ddjxfunc
 
 end module m_costf

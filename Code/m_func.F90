@@ -1,11 +1,12 @@
 module m_func
-real, parameter :: pi=3.141592654
+   real, parameter :: pi=3.141592654
+   real, save ::  beta    ! model parameter
+   integer, save ::  funcmode ! which function to use
+
 contains
 
-real function func(x,beta,funcmode)
+real function func(x)
    real, intent(in) :: x
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
    select case (funcmode)
    case(0)
       func=x+beta*x**3
@@ -18,10 +19,8 @@ real function func(x,beta,funcmode)
    end select
 end function func
 
-real function dfunc(x,beta,funcmode)
+real function dfunc(x)
    real, intent(in) :: x
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
    select case (funcmode)
    case(0)
       dfunc=1.0+3.0*beta*x**2
@@ -34,10 +33,8 @@ real function dfunc(x,beta,funcmode)
    end select
 end function dfunc
 
-real function ddfunc(x,beta,funcmode)
+real function ddfunc(x)
    real, intent(in) :: x
-   real, intent(in) :: beta
-   integer, intent(in) :: funcmode
    select case (funcmode)
    case(0)
       ddfunc=6.0*beta*x

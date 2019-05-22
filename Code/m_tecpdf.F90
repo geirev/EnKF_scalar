@@ -1,4 +1,5 @@
 module m_tecpdf
+logical, save :: lactivepdf
 contains
    subroutine tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
    implicit none
@@ -20,7 +21,7 @@ contains
    integer m,i,j,ival,jval
    logical lopen
    real sump
-
+   if (.not.lactivepdf) return
 ! Joint pdf (only used for plotting)
    pdf=0.0
    do i=1,nrsamp

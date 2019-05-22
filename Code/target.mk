@@ -1,2 +1,2 @@
-TARGET = scalar2
+TARGET = scalar3
 
