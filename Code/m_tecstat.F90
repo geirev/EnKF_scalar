@@ -16,16 +16,9 @@
    real,             intent(in) :: var(0:nmda)
    real,             intent(in) :: skew(0:nmda)
    real,             intent(in) :: curt(0:nmda)
-   integer m,i,j
+   integer i
    real salpha
-   logical lopen
-   character(len=10) mdamode
    character(len=80) totfname
-   character(len=3) tag3
-   character(len=3) alp
-   character(len=3) csamp
-   character(len=2) tag2
-   integer ilen
    character(len=40) caseid
 
 
@@ -46,6 +39,5 @@
       enddo
    close(10)
 
-   900 format(10(1x,e16.9))
    end subroutine
    end module

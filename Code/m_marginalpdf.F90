@@ -13,8 +13,6 @@ real, intent(in)    :: dx
 real, intent(in)    :: dy
 
 real sump
-integer loc1(1)
-integer loc2(2)
 integer i,j
 
 ! Mode of joint pdf

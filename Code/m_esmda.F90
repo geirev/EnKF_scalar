@@ -48,12 +48,10 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    alphasum=0.0
    do n=1,nmda
       alpha(n)=getalpha(n,nmda,alphageo)
+      print '(a,i3,a,i3,a,f13.5,a,i3)','step:',n,' alpha(',n,')=',alpha(n),' nmda=',nmda
       alphasum=alphasum+1.0/alpha(n)
-      print *,'alpha            :',alpha(n)
       call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
-      write(*,'(a,f10.4)')'Cyy from samples :',Cyy
       if (lcyyreg) cyy=cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
-      write(*,'(i3,f10.2,a,2f13.5,e13.5)')n,alpha(n),', cxx= ',cxx,cyx,cqy
 
       do i=1,nrsamp
          pert=sqrt(alpha(n))*sigo*normal()
@@ -79,7 +77,7 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
    call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
 
-   write(*,'(a)')'ES-MDA analysis completed'
+   write(*,'(a,f8.2)')'ES-MDA analysis completed.  alphasum=',alphasum
    write(*,'(a)')'++++++++++++++++++++++++++++++++++++++++++++++'
    write(*,'(a)')
 

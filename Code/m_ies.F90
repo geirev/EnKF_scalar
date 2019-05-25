@@ -18,6 +18,7 @@ real, save :: ies_eps=0.0000001
 
 contains 
    subroutine ies(samples,xf,qf,nrsamp,esamp,dpert)
+   implicit none
    integer, intent(in)  :: nrsamp            ! Number of samples
    integer, intent(in)  :: esamp             ! Number of samples nrsamp=10^esamp for plotting
    real,    intent(out) :: samples(nrsamp,2) ! Returns posterior samples
@@ -34,19 +35,18 @@ contains
 !   real, allocatable :: costite(:,:)
 !   real, allocatable :: xsampit(:,:)
 
-   integer n,i,j,sumconv
+   integer n,i,sumconv
    real grad1,grad2(2)
-   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,alphasum
-   real Czz(2,2),Pzz(2,2),PIzz(2,2),CIzz(2,2),zi(2),zf(2),Pzy(2,1),Pyz(1,2)
-   real pxx,Pyy,pqq,pyx,pqy,pqx,Pyymat(1,1)
-   real pert,jx,djx,djq,ddjx,dgx,dgq
+   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx
+   real Czz(2,2),Pzz(2,2),CIzz(2,2),zi(2),zf(2),Pzy(2,1),Pyz(1,2)
+   real pxx,Pyy,pqq,pyx,pqy,pqx
+   real djx,ddjx,dgx
    character(len=40) caseid
 
    allocate(xsamp(nrsamp))
    allocate(qsamp(nrsamp))
    allocate(ysamp(nrsamp))
    allocate(iconv(nrsamp)) 
-
 !   allocate(costens(nx,10))
 !   allocate(costite(10,nrits))
 !   allocate(xsampit(10,nrits))
@@ -63,15 +63,13 @@ contains
    call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
    Czz(1,1)=Cxx; Czz(2,2)=Cqq; Czz(1,2)=Cqx; Czz(2,1)=Cqx
    CIzz(1,1)=Cqq; CIzz(2,2)=Cxx; CIzz(1,2)=-Cqx; CIzz(2,1)=-Cqx
-   CIzz=CIzz/(Cxx*Cqq-Cqx*Cqx)
+   if (Cqq > 0.0) CIzz=CIzz/(Cxx*Cqq-Cqx*Cqx)
 
    sumconv=0
    do i=1,maxiesit
-      if (i > 10) then
-         if (mod(i,10) == 0) then
-            write(*,'(a,i4,a)',advance='no')'i=',i,'...'
-            print *,'converged realizations=', sumconv,nrsamp,real(100*sumconv)/real(nrsamp)
-         endif
+      if (mod(i,10) == 0) then
+         write(*,'(a,i4,a)',advance='no')'i=',i,'...'
+         print *,'converged realizations=', sumconv,nrsamp,real(100*sumconv)/real(nrsamp)
       endif
       call cov(Pxx,Pyy,Pqq,Pyx,Pqy,Pqx,xsamp,ysamp,qsamp,nrsamp)
       if (lcyyreg) Pyy=cyyreg(Pxx,Pqq,Pyx,Pqy,Pqx)
@@ -82,14 +80,13 @@ contains
 !        Old method (Evensen 2018b paper)
          if (sigw > 0.0) then
             print *,'IESv=1 do not support model errors'
-            exit
+            stop
          endif
 
          dgx=(Pyx)/(Pxx)
-         djx=0.0
 
          do n=1,nrsamp
-            if (iconv(n) > 0) cycle ! do nothing for converged realizations
+            if (iconv(n) > 0) cycle 
 
             djx=cdd*(xsamp(n)-xf(n))  + dgx*Cxx*(ysamp(n)-dpert(n)) 
             ddjx= Pyy + cdd 
@@ -97,7 +94,7 @@ contains
             xsamp(n)=xsamp(n) - gamma_ies*djx/ddjx
             ysamp(n)=func(xsamp(n)) 
 
-            if ((abs(djx) < ies_eps) .and. (abs(djq) < ies_eps)) iconv(n)=1
+            if (abs(djx) < ies_eps) iconv(n)=1
          enddo
 
       elseif (IESv == 3 .and. Cqq > 0.0) then
@@ -130,7 +127,7 @@ contains
       elseif (IESv == 3 .and. Cqq == 0.0) then
 !        Matrix version without model erros
          do n=1,nrsamp
-            if (iconv(n) > 0) cycle ! do nothing for converged realizations
+            if (iconv(n) > 0) cycle 
 
             grad1 = (Pxx/Cxx)*(xsamp(n) - xf(n)) &
                       -  (Pyx/(Pyy + Cdd))*( (Pyx/Cxx)*(xsamp(n) - xf(n)) - ysamp(n) + dpert(n)) 
@@ -157,7 +154,7 @@ contains
          exit
       endif
 
-! Dumping costfunction stuff
+! Dumping costfunction stuff for plotting the updates for the first nrits iterates of IES
 !      if (i < nrits) then
 !         do j=1,10
 !            xsampit(j,i+1)=xsamp(j)

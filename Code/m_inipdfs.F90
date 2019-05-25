@@ -6,7 +6,6 @@ use m_tecfunc
 use m_tecjointpdf
 use m_getcaseid
 use m_marginalpdf
-
 implicit none
 contains
 subroutine compute_prior()

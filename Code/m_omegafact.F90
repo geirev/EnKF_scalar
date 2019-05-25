@@ -1,13 +1,14 @@
 module m_omegafact
 contains
 subroutine omegafact(nrsamp,Omega)
+implicit none
 integer, intent(in) :: nrsamp
 real,    intent(in) :: Omega(nrsamp,nrsamp)
 real VL
 real VR(nrsamp,nrsamp)
 real WR(nrsamp),WI(nrsamp)
 real work(8*nrsamp)
-integer info,lwork
+integer info,lwork,i
 
    lwork=8*nrsamp
    

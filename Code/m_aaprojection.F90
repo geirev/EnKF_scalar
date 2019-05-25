@@ -16,7 +16,7 @@ subroutine aaprojection(A,AA,ndim,nrsamp,truncation)
    integer ierr
    integer lwork
    integer nrmin
-   integer nrsigma,i,j,ii
+   integer nrsigma,i
 
    real sigsum,sigsum1
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

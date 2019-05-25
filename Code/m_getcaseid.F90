@@ -13,7 +13,6 @@ subroutine getcaseid(caseid,esmethod,alphageo,nmda,esamp,sigw,it)
    character(len=3) cnmda
    character(len=3) csamp
    character(len=3) csigw
-   character(len=1) cenks
    character(len=2) cit
  
    write(calphageo,'(f3.1)')alphageo

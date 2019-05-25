@@ -12,12 +12,10 @@ subroutine pseudoinv(W,Wi,n,nrsamp,truncation)
    real, allocatable :: sig0(:)
    real, allocatable :: U0(:,:)  
    real, allocatable :: VT0(:,:)  
-   real, allocatable :: VS(:,:)  
    integer ierr
    integer lwork
    integer nrmin
    integer nrsigma,i,j
-   real :: V(nrsamp,nrsamp)
 
    real sigsum,sigsum1
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

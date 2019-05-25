@@ -19,9 +19,8 @@ integer, parameter :: ndim=2
 
 contains 
    subroutine enstein(samples,xf,qf,nrsamp,esamp)
-
-   real,    intent(out) :: samples(nrsamp,2) ! Returns posterior samples
    integer, intent(in)  :: nrsamp            ! Number of samples
+   real,    intent(out) :: samples(nrsamp,2) ! Returns posterior samples
    integer, intent(in)  :: esamp             ! Number of samples nrsamp=10^esamp for plotting
    real,    intent(in)  :: xf(nrsamp)        ! Prior samples of x
    real,    intent(in)  :: qf(nrsamp)        ! Prior samples of q
@@ -30,14 +29,14 @@ contains
    real, allocatable :: qsamp(:)
    real, allocatable :: ysamp(:)
    integer, allocatable :: iconv(:)
-   integer n,m,i,j,k,sumconv
+   integer n,i,j,k,sumconv
    character(len=40) caseid
 
    real cxx,cyy,cqq,cyx,cqy,cqx
    real pxx,pyy,pqq,pyx,pqy,pqx
    real, allocatable :: sf(:),si(:,:),grad(:,:),newgrad(:,:)
    real :: xlength=1.0
-   real Czz(2,2),Pzz(2,2),PIzz(2,2),CIzz(2,2),zi(2),zf(2),Pzy(2,1),Pyz(1,2)
+   real Czz(2,2),Pzz(2,2),PIzz(2,2),CIzz(2,2),Pzy(2,1),Pyz(1,2)
    real fac,tmp
 
    allocate(xsamp(nrsamp))
@@ -53,16 +52,23 @@ contains
 !        xlength = 1.0            ; print '(a,f13.5)','xlength=',xlength
 
    do n=1,nrsamp
-!        Initial guess
+!     Initial guess
       iconv(n)=0
       xsamp(n)=xf(n)
       qsamp(n)=qf(n)
       ysamp(n)=func(xsamp(n))+qsamp(n)
-!        Prior in cost function 
+!     Prior in cost function 
       sf(1)=x0   
       sf(2)=0.0
    enddo
    call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
+   if (Cqq==0.0) then
+      write(*,'(a)',advance='yes')'Only coded for the case with model errors'
+      deallocate(xsamp,ysamp,qsamp,iconv)
+      return
+   endif
+
+
    Czz(1,1)=Cxx; Czz(2,2)=Cqq; Czz(1,2)=Cqx; Czz(2,1)=Cqx
    CIzz(1,1)=Cqq; CIzz(2,2)=Cxx; CIzz(1,2)=-Cqx; CIzz(2,1)=-Cqx
    CIzz=CIzz/(Cxx*Cqq-Cqx*Cqx)

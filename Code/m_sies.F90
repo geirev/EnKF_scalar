@@ -52,16 +52,9 @@ contains
    real, allocatable :: xx(:),xxold(:),bb(:)
    integer, allocatable :: ipiv(:)
 
-   integer n,i,j,k,m,sumconv
-   real n1
-   real grad1,grad2(2)
-   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,alphasum
-   real Czz(2,2),Pzz(2,2),PIzz(2,2),CIzz(2,2),zi(2),zf(2),Pzy(2,1),Pyz(1,2)
-   real pxx,Pyy,pqq,pyx,pqy,pqx,Pyymat(1,1)
-   real pert,jx,djx,djq,ddjx,dgx,dgq
+   integer n,i,k,m
+   real n1,diffW,diffx,C(1,1)
    character(len=40) caseid
-   real SS(1,1),meanY,diffW,Y0mean,diffx
-   real :: C(1,1)
 
    allocate(xsamp(nrsamp))
    allocate(qsamp(nrsamp))
@@ -69,9 +62,7 @@ contains
    allocate(iconv(nrsamp)) 
 
 
-   allocate (W(nrsamp,nrsamp))
-   allocate (WW(nrsamp,nrsamp))
-   allocate (Omega(nrsamp,nrsamp))
+   allocate (W(nrsamp,nrsamp), WW(nrsamp,nrsamp), Omega(nrsamp,nrsamp))
    allocate (Yi(1,nrsamp))
    allocate (YY(1,nrsamp))
    allocate (YAinv(1,ndim))
@@ -255,7 +246,8 @@ contains
    call tecmargpdf('y',Yi(1,1:nrsamp),nrsamp,caseid,ya,yb,ny)
 
    deallocate(xsamp,ysamp,qsamp,iconv)
-   deallocate(W, WW, Omega, Yi, YY, YAinv, S, YT,ST,STO, Dens, H, E0, Ei, A0)
+   deallocate(W, WW, Omega)
+   deallocate(Yi, YY, YAinv, S, YT,ST,STO, Dens, H, E0, Ei, A0)
    deallocate(Ai, Ainv, A0inv, aveW, xx,bb, xxold, ipiv) 
 
    write(*,'(a)')'SIES analysis completed'

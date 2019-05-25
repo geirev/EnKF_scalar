@@ -27,5 +27,5 @@ subroutine avevar(datavector,nrsamp,ave,var)
       var=var+p
    enddo
    var=var/(real(nrsamp-1))
-end
+end subroutine
 end module m_avevar

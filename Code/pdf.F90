@@ -41,10 +41,8 @@ program iterative_smoothers
    real, allocatable :: dpert(:)
    real, allocatable :: samples(:,:,:) 
 
-   character(len=40) caseid
-
-   integer i,j,k,m,n
-   real ave,var,sump
+   integer j,n
+   real ave,var
    character(len=2) ca
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -13,18 +13,8 @@
    real,             intent(in) :: curt(0:iterations)
    real,             intent(in) :: beta
    real,             intent(in) :: sigw
-   integer m,i,j
-   real salpha
-   logical lopen
-   character(len=10) mdamode
+   integer i
    character(len=80) totfname
-   character(len=3) csamp
-   character(len=3) zsamp
-   character(len=1) cgrad
-   character(len=1) zgrad
-   character(len=2) tag2
-   character(len=3) tag3
-   integer ilen
    character(len=40) caseid
    i=0
    call getcaseid(caseid,esmethod,1.0,1,nrsamp,sigw,i)
@@ -42,6 +32,5 @@
       enddo
    close(10)
 
-   900 format(10(1x,e16.9))
    end subroutine
    end module

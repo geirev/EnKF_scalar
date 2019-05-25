@@ -22,9 +22,8 @@ subroutine es(samples,xsampini,qsampini,dpert,nrsamp,esamp)
    real, allocatable :: qsamp(:)
    real, allocatable :: ysamp(:)
 
-   integer n,i
-   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,alphasum
-   real pert
+   integer i
+   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx
    character(len=40) caseid
 
    allocate(xsamp(nrsamp))

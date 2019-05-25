@@ -43,5 +43,5 @@ subroutine moments(datavector,nrsamp,ave,adev,sdev,var,skew,curt)
       print *,' No skew or kurtosis when zero variance.'
    end if
 return
-end
-end module m_moments
+end subroutine
+end module

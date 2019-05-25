@@ -18,8 +18,7 @@ contains
 
    real pdf(nx,ny)
 
-   integer m,i,j,ival,jval
-   logical lopen
+   integer i,j,ival,jval
    real sump
    if (.not.lactivepdf) return
 ! Joint pdf (only used for plotting)

@@ -8,7 +8,6 @@ subroutine tecsampini(fname,cost,x,nit,nr)
    real,             intent(in) :: x(nr,nit)
    real,             intent(in) :: cost(nr,nit)
    integer i,j
-   character(len=2) tag2
 
    open(10,file=trim(fname)//'.dat',status='unknown')
       write(10,*)'TITLE = "'//trim(fname)//'"'

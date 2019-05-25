@@ -1,10 +1,13 @@
 module m_getalpha
 contains
 real function getalpha(n,nmda,alphageo)
+   implicit none
    integer, intent(in) :: n
    integer, intent(in) :: nmda
    real,    intent(in) :: alphageo
    real, allocatable :: alpha(:)
+   real alphasum
+   integer i
 
    allocate(alpha(nmda))
 

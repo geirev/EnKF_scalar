@@ -10,9 +10,6 @@ subroutine integrals(maxiesit)
    real :: xmin=-5.0
    real :: xmax=5.0
    real :: intf=0.0
-   real :: intfx1=0.0
-   real :: intfx2=0.0
-   real :: dummy=0.0
    integer i
    real x
    real y
