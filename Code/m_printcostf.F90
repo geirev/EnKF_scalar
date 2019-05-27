@@ -24,7 +24,7 @@ subroutine printcostf(xsampini,xsamp,dpert,nrsamp)
    allocate(costens(nx,10))
    do n=1,10
       do i=1,nx
-         costens(i,n)=(x(i)-xsampini(n))**2/siga**2 + (func(x(i))-dpert(n))**2/cdd    
+         costens(i,n)=(x(i)-xsampini(n))**2/siga**2 + (func(x(i),0.0)-dpert(n))**2/cdd    
       enddo
    enddo
    call teccostens('costens',costens,x,nx,10,'x')
@@ -33,9 +33,9 @@ subroutine printcostf(xsampini,xsamp,dpert,nrsamp)
    allocate(xsampit(10,nrits))
    do n=1,10
       xsampit(n,1)=xsampini(n)
-      costite(n,1)= (func(xsampit(n,1))-dpert(n))**2/cdd    
+      costite(n,1)= (func(xsampit(n,1),0.0)-dpert(n))**2/cdd    
       xsampit(n,2)=xsamp(n)
-      costite(n,2)= (xsampit(n,2)-xsampini(n))**2/siga**2 + (func(xsampit(n,2))-dpert(n))**2/cdd    
+      costite(n,2)= (xsampit(n,2)-xsampini(n))**2/siga**2 + (func(xsampit(n,2),0.0)-dpert(n))**2/cdd    
    enddo
    call tecsampini('sampiniES',costite,xsamp,2,10)
    deallocate(costens)

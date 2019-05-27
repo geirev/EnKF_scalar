@@ -13,6 +13,7 @@ implicit none
 logical, save :: lmda           ! Run esmda or not
 integer, save :: nmda           ! number of mda iterations
 real,    save :: alphageo       ! geometrical factor for alpha sequence
+logical, save :: lesmdaadjoint=.false. ! Run IES with adjoint sensitivites
 contains
 subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    integer, intent(in)  :: nrsamp
@@ -28,9 +29,9 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    real, allocatable :: alpha(:)
 
    integer n,i
-   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,alphasum
+   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,alphasum,dgx
    real pert
-   character(len=40) caseid
+!   character(len=40) caseid
 
    allocate(xsamp(nrsamp))
    allocate(qsamp(nrsamp))
@@ -42,7 +43,7 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    do i=1,nrsamp
       xsamp(i)=xsampini(i)
       qsamp(i)=qsampini(i)
-      ysamp(i)=func(xsamp(i))+qsamp(i)
+      ysamp(i)=func(xsamp(i),qsamp(i))
    enddo
 
    alphasum=0.0
@@ -50,14 +51,22 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
       alpha(n)=getalpha(n,nmda,alphageo)
       print '(a,i3,a,i3,a,f13.5,a,i3)','step:',n,' alpha(',n,')=',alpha(n),' nmda=',nmda
       alphasum=alphasum+1.0/alpha(n)
+
       call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
-      if (lcyyreg) cyy=cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
+
+      if (lcyyreg) Cyy=cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
+
+      if (lesmdaadjoint) then
+         dgx=dfunc(xsamp(i),qsamp(i))
+         Cyx=dgx*Cxx
+         Cyy=dgx*Cxx*dgx
+      endif
 
       do i=1,nrsamp
          pert=sqrt(alpha(n))*sigo*normal()
          xsamp(i)=xsamp(i) + (Cyx/(Cyy+alpha(n)*Cdd))*(d+pert-ysamp(i))
          qsamp(i)=qsamp(i) + (Cqy/(Cyy+alpha(n)*Cdd))*(d+pert-ysamp(i))
-         ysamp(i)=func(xsamp(i))+qsamp(i)
+         ysamp(i)=func(xsamp(i),qsamp(i))
       enddo
 !         call getcaseid(caseid,'MDA',alphageo,nmda,esamp,sigw,n)
 !         call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
@@ -66,16 +75,16 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    samples(:,1)=xsamp(:)
    samples(:,2)=qsamp(:)
 
-   if (sigw < sigq) then
-      do i=1,nrsamp
-         ysamp(i)=ysamp(i)+sigq*normal()
-      enddo
-   endif
-   call getcaseid(caseid,'MDA',alphageo,nmda,esamp,sigw,0)
-   call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
-   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
+!   if (sigw < sigq) then
+!!      do i=1,nrsamp
+!         ysamp(i)=ysamp(i)+sigq*normal()
+!      enddo
+!   endif
+!   call getcaseid(caseid,'MDA',alphageo,nmda,esamp,sigw,0)
+!   call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
+!   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
+!   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
+!   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
 
    write(*,'(a,f8.2)')'ES-MDA analysis completed.  alphasum=',alphasum
    write(*,'(a)')'++++++++++++++++++++++++++++++++++++++++++++++'

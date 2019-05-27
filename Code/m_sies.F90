@@ -83,16 +83,14 @@ contains
    write(*,'(a)')'++++++++++++++++++++++++++++++++++++++++++++++'
    write(*,'(a)')'SIES analysis...'
 
+   n1=sqrt(real(nrsamp-1))
    do n=1,nrsamp
       Dens(1,n)=dpert(n)
       E0(1,n)=xf(n)
-      Yi(1,n)=func(E0(1,n))
-      if (ndim .gt. 1) then
-         E0(2,n)=qf(n)
-         Yi(1,n)=Yi(1,n)+E0(2,n)
-      endif
+      E0(2,n)=qf(n)
+      Yi(1,n)=func(E0(1,n),E0(2,n))
    enddo
-   n1=sqrt(real(nrsamp-1))
+
    do i=1,ndim
       A0(i,:)=( E0(i,:) - sum(E0(i,1:nrsamp))/real(nrsamp) )/n1
    enddo
@@ -210,8 +208,7 @@ contains
 
 !    Compute new model prediction
       do n=1,nrsamp
-         Yi(1,n)=func(Ei(1,n))
-         if (ndim>1) Yi(1,n)=Yi(1,n)+Ei(2,n)
+         Yi(1,n)=func(Ei(1,n),Ei(2,n))
       enddo
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -219,7 +216,7 @@ contains
       diffW=maxval(abs(W-WW))
 
 ! dumping iterations
-      call getcaseid(caseid,'SIES',-1.0,-1,esamp,sigw,i)
+      call getcaseid(caseid,'SIES   ',-1.0,-1,esamp,sigw,i)
       call tecmargpdf('x',Ei(1,:),nrsamp,caseid,xa,xb,nx)
 
       if (diffW < sies_eps) then
@@ -231,19 +228,19 @@ contains
 
 
    samples(:,1)=Ei(1,:)
-   if (ndim > 1) samples(:,2)=Ei(2,:)
+   samples(:,2)=Ei(2,:)
 
 
 !  Recomputing ysamp with some noise for nicer plotting
-   if (sigw < sigq) then
-      do n=1,nrsamp
-         ysamp(n)=ysamp(n)+sigq*normal()
-      enddo
-   endif
-   call getcaseid(caseid,'SIES',-1.0,-1,esamp,sigw,0)
-   call tecmargpdf('x',Ei(1,1:nrsamp),nrsamp,caseid,xa,xb,nx)
-   if (ndim > 1) call tecmargpdf('q',Ei(2,1:nrsamp),nrsamp,caseid,qa,qb,nx)
-   call tecmargpdf('y',Yi(1,1:nrsamp),nrsamp,caseid,ya,yb,ny)
+!   if (sigw < sigq) then
+!      do n=1,nrsamp
+!         ysamp(n)=ysamp(n)+sigq*normal()
+!      enddo
+!   endif
+!   call getcaseid(caseid,'SIES',-1.0,-1,esamp,sigw,0)
+!   call tecmargpdf('x',Ei(1,1:nrsamp),nrsamp,caseid,xa,xb,nx)
+!   call tecmargpdf('q',Ei(2,1:nrsamp),nrsamp,caseid,qa,qb,nx)
+!   call tecmargpdf('y',Yi(1,1:nrsamp),nrsamp,caseid,ya,yb,ny)
 
    deallocate(xsamp,ysamp,qsamp,iconv)
    deallocate(W, WW, Omega)

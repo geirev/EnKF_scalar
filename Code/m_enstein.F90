@@ -56,7 +56,7 @@ contains
       iconv(n)=0
       xsamp(n)=xf(n)
       qsamp(n)=qf(n)
-      ysamp(n)=func(xsamp(n))+qsamp(n)
+      ysamp(n)=func(xsamp(n),qsamp(n))
 !     Prior in cost function 
       sf(1)=x0   
       sf(2)=0.0
@@ -99,7 +99,7 @@ contains
 ! Data term in EnStein  G=Pxx^{-1} Pxy
          call dgemm('N','N',ndim,1,ndim,fac,PIzz,ndim,Pzy,ndim,1.0,grad(:,n),ndim)
 ! Data term in Stein with analytic G
-!            grad(1,n)=grad(1,n)+dfunc(si(1,n))*fac
+!            grad(1,n)=grad(1,n)+dfunc(si(1,n),si(2,n))*fac
 !            grad(2,n)=grad(2,n)+fac
       enddo
 
@@ -121,7 +121,7 @@ contains
          si(:,n) = si(:,n) - 0.25*newgrad(:,n)
          xsamp(n)=si(1,n)
          qsamp(n)=si(2,n)
-         ysamp(n)=func(xsamp(n)) + qsamp(n)
+         ysamp(n)=func(xsamp(n),qsamp(n))
 !         print *,'XXX',xsamp(n),qsamp(n),ysamp(n)
       enddo
 
@@ -132,14 +132,14 @@ contains
    samples(:,2)=qsamp(:)
 
 !  Recomputing ysamp with some noise for nicer plotting
-   if (sigw < sigq) then
-      do n=1,nrsamp
-         ysamp(n)=ysamp(n)+sigq*normal()
-      enddo
-   endif
-   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
+!   if (sigw < sigq) then
+!      do n=1,nrsamp
+!         ysamp(n)=ysamp(n)+sigq*normal()
+!      enddo
+!   endif
+!   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
+!   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
+!   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
 !      call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
    deallocate(xsamp,ysamp,qsamp,iconv)
    write(*,'(a)')'Stein analysis completed'

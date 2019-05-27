@@ -1,7 +1,7 @@
 module m_getcaseid
 contains
 subroutine getcaseid(caseid,esmethod,alphageo,nmda,esamp,sigw,it)
-   character(len=*), intent(in) :: esmethod
+   character(len=7), intent(in) :: esmethod
    real, intent(in)    :: alphageo
    real, intent(in)    :: sigw
    integer, intent(in) :: nmda

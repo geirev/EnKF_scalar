@@ -21,11 +21,12 @@ subroutine integrals(maxiesit)
    real :: skew=0.0
    real :: kurt=0.0
 
+   if (sigw > 0.0) return
    dx=(xmax-xmin)/real(n-1)
 
    do i=1,n-1
       x=xmin+real(i-1)*dx+0.5*dx
-      y=func(x)
+      y=func(x,0.0)
       jxfunc=(x-x0)**2/siga**2 + (y-d)**2/sigo**2
       intf=intf+dx*exp(-0.5*jxfunc)
       mu=mu+dx*x*exp(-0.5*jxfunc)
@@ -35,7 +36,7 @@ subroutine integrals(maxiesit)
 
    do i=1,n-1
       x=xmin+real(i-1)*dx+0.5*dx
-      y=func(x)
+      y=func(x,0.0)
       jxfunc=(x-x0)**2/siga**2 + (y-d)**2/sigo**2
       sig2=sig2+dx*(x-mu)**2*exp(-0.5*jxfunc)
       skew=skew+dx*(x-mu)**3*exp(-0.5*jxfunc)

@@ -39,7 +39,7 @@ subroutine compute_costfunction()
 ! Definition of the strong constraint cost function
    integer i
    do i=1,nx
-      cost(i)=(x(i)-x0)**2/siga**2 + (func(x(i))-d)**2/sigo**2    
+      cost(i)=(x(i)-x0)**2/siga**2 + (func(x(i),q(i))-d)**2/sigo**2    
    enddo
    call tecfunc('costf',cost,x,nx,'x','')
 end subroutine
@@ -54,16 +54,16 @@ subroutine compute_uncond_jointpdf(esamp)
    do j=1,ny
    do i=1,nx
       pdf(i,j)=exp( -0.5*(x(i)-x0)**2/siga**2            &
-                    -0.5*(y(j)-func(x(i)))**2/max(sigw,sigq)**2 )
+                    -0.5*(y(j)-func(x(i),q(i)))**2/max(sigw,sigq)**2 )
    enddo
    enddo
    sump=sum(pdf(:,:))*dx*dy
    pdf=pdf/sump
-   call getcaseid(caseid,'PDFJ',-1.0,-1,esamp,sigw,0)
+   call getcaseid(caseid,'PDFJ   ',-1.0,-1,esamp,sigw,0)
    call tecjointpdf(pdf,x,y,nx,ny,caseid)
    call marginalpdf(pdf,margx,margy,nx,ny,x,y,dx,dy)
-   call tecfunc('margx',margx,x,nx,'x',caseid)
-   call tecfunc('margy',margy,y,ny,'y',caseid)
+   call tecfunc('PDFJx',margx,x,nx,'x','')
+   call tecfunc('PDFJy',margy,y,ny,'y','')
 
 end subroutine
 
@@ -76,13 +76,13 @@ subroutine compute_cond_jointpdf(esamp)
    do j=1,ny
    do i=1,nx
       pdf(i,j)=exp(-0.5*(x(i)-x0)**2/siga**2            &
-                   -0.5*(y(j)-func(x(i)))**2/max(sigw,sigq)**2  &
+                   -0.5*(y(j)-func(x(i),q(i)))**2/max(sigw,sigq)**2  &
                    -0.5*(y(j)-d)**2/sigo**2)    
    enddo
    enddo
    sump=sum(pdf(:,:))*dx*dy
    pdf=pdf/sump
-   call getcaseid(caseid,'PDFC',-1.0,1,esamp,sigw,0)
+   call getcaseid(caseid,'PDFC   ',-1.0,-1,esamp,sigw,0)
    call tecjointpdf(pdf,x,y,nx,ny,caseid)
    call marginalpdf(pdf,margx,margy,nx,ny,x,y,dx,dy)
 end subroutine
@@ -91,24 +91,22 @@ end subroutine
 subroutine compute_marginals(esamp)
    integer i,j
    integer esamp
-   character(len=40) caseid
    margx(:)=0.0
    do i=1,nx
    do j=1,ny
       if (sigw==0.0) then
          margx(i)=margx(i)+exp(-0.5*(x(i)-x0 )**2/siga**2                   &
-                               -0.5*(d-func(x(i)))**2/sigo**2)
+                               -0.5*(d-func(x(i),q(i)))**2/sigo**2)
       else 
          margx(i)=margx(i)+exp(-0.5*(x(i)-x0 )**2/siga**2                   &
                                -0.5*(q(j)-0.0)**2/max(sigw,0.0001)**2  & 
-                               -0.5*(d-func(x(i))-q(j))**2/sigo**2)
+                               -0.5*(d-func(x(i),q(i))-q(j))**2/sigo**2)
       endif
    enddo
    enddo
    margx=margx/(sum(margx(:))*dx)
-   call getcaseid(caseid,'PDFC',-1.0,1,esamp,sigw,0)
-   call tecfunc('margx',margx,x,nx,'x',caseid)
-   call tecfunc('margy',margy,y,ny,'y',caseid)
+   call tecfunc('PDFCx',margx,x,nx,'x','')
+   call tecfunc('PDFCy',margy,y,ny,'y','')
 end subroutine
 
 end module

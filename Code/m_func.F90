@@ -1,26 +1,29 @@
 module m_func
+   implicit none
    real, parameter :: pi=3.141592654
    real, save ::  beta    ! model parameter
    integer, save ::  funcmode ! which function to use
 
 contains
 
-real function func(x)
+real function func(x,q)
    real, intent(in) :: x
+   real, intent(in) :: q
    select case (funcmode)
    case(0)
-      func=x+beta*x**3
+      func=x+beta*x**3 + q
    case(1)
-      func=1.0+beta*(x**3-x)  ! use with beta=2.62
+      func=1.0+beta*(x**3-x) + q  ! use with beta=2.62
    case(2)
-      func=1.0+sin(x*pi)
+      func=1.0+sin(x*pi) + q
    case default
       stop 'func: invalid mode for function func'
    end select
 end function func
 
-real function dfunc(x)
+real function dfunc(x,q)
    real, intent(in) :: x
+   real, intent(in) :: q
    select case (funcmode)
    case(0)
       dfunc=1.0+3.0*beta*x**2
@@ -33,8 +36,9 @@ real function dfunc(x)
    end select
 end function dfunc
 
-real function ddfunc(x)
+real function ddfunc(x,q)
    real, intent(in) :: x
+   real, intent(in) :: q
    select case (funcmode)
    case(0)
       ddfunc=6.0*beta*x

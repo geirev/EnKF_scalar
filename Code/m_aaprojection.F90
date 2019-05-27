@@ -40,11 +40,11 @@ subroutine aaprojection(A,AA,ndim,nrsamp,truncation)
 
 !   write(*,'(a,10g11.3)')'   dgesvd: sigma= ',sig0(1:min(nrmin,10))
 
-   open(10,file='singularvaluesaa.dat')
-      do i=1,nrmin
-         write(10,'(i6,g13.5)')i,sig0(i)
-      enddo
-   close(10)
+!   open(10,file='singularvaluesaa.dat')
+!      do i=1,nrmin
+!         write(10,'(i6,g13.5)')i,sig0(i)
+!      enddo
+!   close(10)
 
 ! Computing significant number of eigenvalues.
    sigsum=0.0

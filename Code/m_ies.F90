@@ -5,15 +5,17 @@ use m_cyyreg
 use m_cov
 use m_getcaseid
 use m_func
+use m_iescostf
 use m_normal
 use m_tecmargpdf
 use m_tecsampini
 use m_tecpdf
 implicit none
-logical, save :: lies        ! Run IES or not
-integer, save :: maxiesit    ! maximumn number of iterations
-real,    save :: gamma_ies   ! step length used in IES
-integer, save :: IESv        ! step length used in IES
+logical, save :: lies                ! Run IES or not
+logical, save :: liesadjoint=.false. ! Run IES with adjoint sensitivites
+integer, save :: maxiesit            ! maximumn number of iterations
+real,    save :: gamma_ies           ! step length used in IES
+integer, save :: IESv                ! step length used in IES
 real, save :: ies_eps=0.0000001
 
 contains 
@@ -41,7 +43,7 @@ contains
    real Czz(2,2),Pzz(2,2),CIzz(2,2),zi(2),zf(2),Pzy(2,1),Pyz(1,2)
    real pxx,Pyy,pqq,pyx,pqy,pqx
    real djx,ddjx,dgx
-   character(len=40) caseid
+!   character(len=40) caseid
 
    allocate(xsamp(nrsamp))
    allocate(qsamp(nrsamp))
@@ -52,13 +54,23 @@ contains
 !   allocate(xsampit(10,nrits))
 
    write(*,'(a)')'++++++++++++++++++++++++++++++++++++++++++++++'
-!    IES update
-   write(*,'(a,2f13.5)',advance='yes')'IES analysis...d,sigo=',d,sigo
+   write(*,'(a)',advance='yes')'IES analysis'
+
+   if (liesadjoint .and. IESv /= 1) then
+      print *,'liesadjoint only implemented for IESv=1'
+      stop
+   endif
+
+   if (sigw > 0.0 .and. IESv== 1) then
+      print *,'IESv=1 do not support model errors'
+      stop
+   endif
+
    do n=1,nrsamp
       iconv(n)=0
       xsamp(n)=xf(n)
       qsamp(n)=qf(n)
-      ysamp(n)=func(xsamp(n))+qsamp(n)
+      ysamp(n)=func(xsamp(n),qsamp(n))
    enddo
    call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
    Czz(1,1)=Cxx; Czz(2,2)=Cqq; Czz(1,2)=Cqx; Czz(2,1)=Cqx
@@ -78,23 +90,24 @@ contains
 
       if (IESv == 1) then
 !        Old method (Evensen 2018b paper)
-         if (sigw > 0.0) then
-            print *,'IESv=1 do not support model errors'
-            stop
-         endif
 
          dgx=(Pyx)/(Pxx)
 
          do n=1,nrsamp
             if (iconv(n) > 0) cycle 
+            if (liesadjoint) then
+               djx  =  djxfunc(xsamp(n),xf(n),dpert(n))
+               ddjx = ddjxfunc(xsamp(n),xf(n),dpert(n))
+            else
+               djx=cdd*(xsamp(n)-xf(n))  + dgx*Cxx*(ysamp(n)-dpert(n))  
+               ddjx= Pyy + cdd 
+            endif
 
-            djx=cdd*(xsamp(n)-xf(n))  + dgx*Cxx*(ysamp(n)-dpert(n)) 
-            ddjx= Pyy + cdd 
 
             xsamp(n)=xsamp(n) - gamma_ies*djx/ddjx
-            ysamp(n)=func(xsamp(n)) 
+            ysamp(n)=func(xsamp(n),qsamp(n)) 
 
-            if (abs(djx) < ies_eps) iconv(n)=1
+            if (abs(djx) < 0.0001*ies_eps) iconv(n)=1
          enddo
 
       elseif (IESv == 3 .and. Cqq > 0.0) then
@@ -119,7 +132,7 @@ contains
 
             xsamp(n)=zi(1)
             qsamp(n)=zi(2)
-            ysamp(n)=func(xsamp(n)) + qsamp(n)
+            ysamp(n)=func(xsamp(n),qsamp(n))
    
             if ((abs(grad2(1)) < ies_eps) .and. (abs(grad2(2)) < ies_eps)) iconv(n)=1
          enddo
@@ -133,7 +146,8 @@ contains
                       -  (Pyx/(Pyy + Cdd))*( (Pyx/Cxx)*(xsamp(n) - xf(n)) - ysamp(n) + dpert(n)) 
 
             xsamp(n) = xsamp(n) - gamma_ies*grad1
-            ysamp(n)=func(xsamp(n)) 
+            qsamp(n)=0.0
+            ysamp(n)=func(xsamp(n),qsamp(n)) 
    
             if (abs(grad1) < ies_eps) iconv(n)=1
 
@@ -158,7 +172,7 @@ contains
 !      if (i < nrits) then
 !         do j=1,10
 !            xsampit(j,i+1)=xsamp(j)
-!            costite(j,i+1)= (xsamp(j)-xf(j))**2/siga**2 + (func(xsamp(j))-dpert(j))**2/cdd    
+!            costite(j,i+1)= (xsamp(j)-xf(j))**2/siga**2 + (func(xsamp(j),qsamp(j))-dpert(j))**2/cdd    
 !         enddo
 !      endif
 
@@ -170,16 +184,16 @@ contains
 !   call tecsampini('sampiniIES',costite,xsampit,min(nrits,i),10)
 
 ! Recomputing ysamp with some noise for nicer plotting
-   if (sigw < sigq) then
-      do n=1,nrsamp
-         ysamp(n)=ysamp(n)+sigq*normal()
-      enddo
-   endif
-   call getcaseid(caseid,'IES',-1.0,-1,esamp,sigw,0)
-   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
-   call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
+!   if (sigw < sigq) then
+!      do n=1,nrsamp
+!         ysamp(n)=ysamp(n)+sigq*normal()
+!      enddo
+!   endif
+!   call getcaseid(caseid,'IES',-1.0,-1,esamp,sigw,0)
+!   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
+!   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
+!   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
+!   call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
 
    deallocate(xsamp,ysamp,qsamp,iconv)
    write(*,'(a)')'IES analysis completed'

@@ -4,30 +4,22 @@ program iterative_smoothers
    use m_inipdfs
    use m_marginalpdf
    use m_set_random_seed2
-   use m_moments
    use m_avevar
    use m_func
    use m_cyyreg
-   use m_aaprojection
    use m_iniens
    use m_es
    use m_ies
    use m_sies
    use m_esmda
    use m_enstein
-   use m_costf
    use m_tecpdf
-   use m_omegafact
    use m_tecmargpdf
-   use m_pseudoinv
-   use m_pseudoinv2
    use m_printcostf
    use m_tecjointpdf
    use m_tecfunc
    use m_teccostens
-   use m_tecsampini
    use m_normal
-   use m_cov
    use m_integrals
    implicit none
    integer nrsamp,esamp
@@ -35,15 +27,17 @@ program iterative_smoothers
    character(len=7) :: method(0:5)=['INI    ','ES     ','IES    ','SIES   ', 'ESMDA  ', 'EnSTEIN']
    character(len=1) :: variable(1:2)=['x','q']
 
-   real, allocatable :: xsampini(:) 
-   real, allocatable :: ysampini(:)
-   real, allocatable :: qsampini(:)
+   real, allocatable :: xsampini(:), xsamp(:)
+   real, allocatable :: qsampini(:), qsamp(:)
+   real, allocatable :: ysampini(:), ysamp(:)
    real, allocatable :: dpert(:)
    real, allocatable :: samples(:,:,:) 
 
-   integer j,n
+   integer i,j,n
    real ave,var
    character(len=2) ca
+   character(len=40) caseid
+   logical ladjoints
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    call set_random_seed2()
@@ -85,6 +79,7 @@ program iterative_smoothers
          stop
       endif
       read(10,*)lcyyreg       ; print '(a,tr10,l1)',  'Regression for Cyy         :',lcyyreg
+      read(10,*)ladjoints     ; print '(a,tr10,l1)',  'Adjoint model sens         :',ladjoints
       read(10,*)lactivepdf    ; print '(a,tr10,l1)',  'Activate pdf printing      :',lactivepdf
       read(10,'(a)')ca
       if (ca /= '#5') then
@@ -121,16 +116,14 @@ program iterative_smoothers
       read(10,*)gamma_enstein ; print '(a,f10.3)',    'gamma_sies                 :',gamma_enstein
    close(10)
 
-   if (xa==xb) then
-      xa=-5.0*siga
-      xb= 5.0*siga
-      print '(a,2f10.4)','xa and xb set to :',xa,xb
-   endif
-
-   if (qa==qb) then
-      qa=-5.0*max(sigq,sigw)
-      qb= 5.0*max(sigq,sigw)
-      print '(a,2f10.4)','qa and qb set to :',qa,qb
+   if (ladjoints) then
+      if (sigw > 0.0 ) stop 'Must have sigw=0.0 with ladjoints=true'
+      if (lies .and. IESv /= 1 )  stop 'Must have IESv=1 with ladjoints=true'
+      lesadjoint=.true.
+      lesmdaadjoint=.true.
+      liesadjoint=.true.
+      if (lsies) lsies=.false.
+      if (lenstein) lenstein=.false.
    endif
 
    nrsamp=10**esamp
@@ -142,7 +135,7 @@ program iterative_smoothers
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Theroretical values for statistical moements (trustat.dat)
-   call integrals(maxiesit)
+!   call integrals(maxiesit)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Grid domain for plotting pdfs in x, q, and y
@@ -169,7 +162,7 @@ program iterative_smoothers
 
 ! IES
    if (lies) then
-      call  ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,esamp,dpert)
+      call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,esamp,dpert)
    endif
 
 ! Subspace IES
@@ -196,6 +189,33 @@ program iterative_smoothers
       if (var > 0.0) write(*,'(4a,2g16.8,a,8g16.8)')method(j),' ',variable(n),' :',ave,sqrt(var),'  Samples:',samples(1:8,n,j)
    enddo
    enddo
+
+
+
+   allocate(xsamp(nrsamp), qsamp(nrsamp), ysamp(nrsamp))
+   do j=0,5
+      if (ladjoints) then
+         if (trim(method(j)) == 'ES')    method(j)='ESAD   '
+         if (trim(method(j)) == 'IES')   method(j)='IESAD  '
+         if (trim(method(j)) == 'ESMDA') method(j)='ESMDAD '
+      endif
+      do i=1,nrsamp
+         xsamp(i)=samples(i,1,j)
+         qsamp(i)=samples(i,2,j)
+         ysamp(i)=func(xsamp(i),ysamp(i))
+         if (sigw < sigq) ysamp(i)=ysamp(i)+sigq*normal()
+      enddo
+      if (trim(method(j)) == 'ESMDA') then
+         call getcaseid(caseid,method(j),alphageo,nmda,esamp,sigw,0)
+      else
+         call getcaseid(caseid,method(j),-1.0,-1,esamp,sigw,0)
+      endif
+      call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
+      call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
+      call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
+      call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
+   enddo
+   deallocate(xsamp, qsamp, ysamp)
 
 ! Printing some cost functions and the ES solution before and after (see also dead code in ies
 !   call printcostf(samples(1:nrsamp,1,0),samples(1:nrsamp,1,1),dpert,nrsamp)

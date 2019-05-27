@@ -102,6 +102,7 @@ depend:
 	mkdepend_linux.pl | sort -u > depends.file
 
 tags: $(FILES)
-	f90tags.sh
+	ctags *.F90
+	#f90tags.sh
 
 include depends.file
