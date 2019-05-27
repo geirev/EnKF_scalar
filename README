@@ -1,0 +1,8 @@
+Scalar contains the code used for studying iterative ensemble smoothers in a scalar case with large ensemble sizes.
+Results were published in
+
+Geir Evensen, Analysis of iterative ensemble smoothers for solving inverse problems, Computational Geosciences, 2018, vol 22, issue 3, pp 885–908
+https://link.springer.com/article/10.1007%2Fs10596-018-9731-y
+
+Geir Evensen, Introducing Stochastic Model Errors In Ensemble-Based History Matching, Computational Geosciences, 2019
+https://link.springer.com/article/10.1007%2Fs10596-019-9819-z
