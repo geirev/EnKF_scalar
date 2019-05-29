@@ -48,7 +48,6 @@ contains
    real, allocatable :: A0inv(:,:)   !  Model ensemble perturbation at iteration i
    real, allocatable :: AAi(:,:)   !  Ai^+Ai
    real, allocatable :: aveW(:)   
-   real, allocatable :: Omega(:,:)  
    real, allocatable :: xx(:),xxold(:),bb(:)
    integer, allocatable :: ipiv(:)
 
@@ -62,7 +61,7 @@ contains
    allocate(iconv(nrsamp)) 
 
 
-   allocate (W(nrsamp,nrsamp), WW(nrsamp,nrsamp), Omega(nrsamp,nrsamp))
+   allocate (W(nrsamp,nrsamp), WW(nrsamp,nrsamp))
    allocate (Yi(1,nrsamp))
    allocate (YY(1,nrsamp))
    allocate (YAinv(1,ndim))
@@ -243,7 +242,7 @@ contains
 !   call tecmargpdf('y',Yi(1,1:nrsamp),nrsamp,caseid,ya,yb,ny)
 
    deallocate(xsamp,ysamp,qsamp,iconv)
-   deallocate(W, WW, Omega)
+   deallocate(W, WW )
    deallocate(Yi, YY, YAinv, S, YT,ST,STO, Dens, H, E0, Ei, A0)
    deallocate(Ai, Ainv, A0inv, aveW, xx,bb, xxold, ipiv) 
 

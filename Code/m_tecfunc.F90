@@ -10,7 +10,7 @@ subroutine tecfunc(fname,y,x,nx,cxvar,czone)
    real,             intent(in) :: y(nx)
    integer i
 
-   open(10,file=trim(fname)//trim(czone)//'.dat',status='unknown')
+   open(10,file=trim(fname)//'.dat',status='unknown')
       write(10,*)'TITLE = "'//trim(fname)//'"'
       write(10,*)'VARIABLES = "'//trim(cxvar)//'" "Marg pdf"'
       write(10,*)'ZONE T= "'//trim(czone)//'" F=POINT, I=',nx

@@ -7,7 +7,7 @@ contains
    real,             intent(in) :: pdf(nx,ny)
    real,             intent(in) :: x(nx)
    real,             intent(in) :: y(ny)
-   character(len=40),intent(in) :: caseid
+   character(len=*),intent(in) :: caseid
 
    integer i,j
 

@@ -7,18 +7,30 @@ use m_tecjointpdf
 use m_getcaseid
 use m_marginalpdf
 implicit none
+
 contains
 subroutine compute_prior()
 ! Definition of the prior
    integer i
    real sump
-   do i=1,nx
-      prior(i)=exp(-0.5*(x(i)-x0)**2/siga**2)
+   real priorxx(nxx),priorqq(nqq)
+   do i=1,nxx
+      priorxx(i)=exp(-0.5*(xx(i)-x0)**2/siga**2)
    enddo
-   sump=sum(prior(:))*dx
-   prior=prior/sump
-   call tecfunc('prior',prior,x,nx,'x','')
-   print '(a)','prior pdf printed to prior.dat'
+   sump=sum(priorxx(:))*dxx
+   priorxx=priorxx/sump
+   call tecfunc('margx_prior',priorxx,xx,nxx,'x','prior')
+   print '(a)','prior pdf printed to margx_prior.dat'
+
+   if (sigw > 0) then
+      do i=1,nqq
+         priorqq(i)=exp(-0.5*(qq(i))**2/sigw**2)
+      enddo
+      sump=sum(priorqq(:))*dqq
+      priorqq=priorqq/sump
+      call tecfunc('margq_prior',priorqq,qq,nqq,'q','prior')
+      print '(a)','prior pdf printed to margq_prior.dat'
+   endif
 end subroutine
 
 
@@ -26,87 +38,127 @@ subroutine compute_likelihood()
 ! Likelihood
    integer j
    real sump
-   do j=1,ny
-      datum(j)=exp(-0.5*(y(j)-d)**2/sigo**2)
+   real datumd(nyy)
+   do j=1,nyy
+      datumd(j)=exp(-0.5*(yy(j)-d)**2/sigo**2)
    enddo
-   sump=sum(datum(:))*dy
-   datum=datum/sump
-   call tecfunc('datum',datum,y,ny,'y','')
-   print '(a)','Likelihood printed to datum.dat'
+   sump=sum(datumd(:))*dyy
+   datumd=datumd/sump
+   call tecfunc('margy_datum',datumd,yy,nyy,'y','datum')
+   print '(a)','Likelihood printed to margy_datum.dat'
 end subroutine
+
 
 subroutine compute_costfunction()
 ! Definition of the strong constraint cost function
-   integer i
-   do i=1,nx
-      cost(i)=(x(i)-x0)**2/siga**2 + (func(x(i),q(i))-d)**2/sigo**2    
-   enddo
-   call tecfunc('costf',cost,x,nx,'x','')
+   integer i,j,k
+   real costxq(nxx,nqq),costx(nxx)
+   if (sigw == 0.0) then
+      k=1
+      do i=1,nxx
+         costx(i)=(xx(i)-x0)**2/siga**2 + (func(xx(i),qq(k))-d)**2/sigo**2    
+      enddo
+      call tecfunc('costfx',costx,xx,nxx,'x','')
+   elseif (sigw > 0.0) then
+      do j=1,nqq
+      do i=1,nxx
+         costxq(i,j)=(xx(i)-x0)**2/siga**2 + (qq(j))**2/sigw**2 + (func(xx(i),qq(j))-d)**2/sigo**2    
+      enddo
+      enddo
+      call tecjointpdf(costxq,xx,yy,nxx,nyy,'costxq')
+   endif
 end subroutine
 
 
 subroutine compute_uncond_jointpdf(esamp)
 ! Definition of the analytical joint unconditional pdf
-   integer i,j
+   integer i,j,k
    integer esamp
    real sump
    character(len=40) caseid
-   do j=1,ny
-   do i=1,nx
-      pdf(i,j)=exp( -0.5*(x(i)-x0)**2/siga**2            &
-                    -0.5*(y(j)-func(x(i),q(i)))**2/max(sigw,sigq)**2 )
-   enddo
-   enddo
-   sump=sum(pdf(:,:))*dx*dy
-   pdf=pdf/sump
-   call getcaseid(caseid,'PDFJ   ',-1.0,-1,esamp,sigw,0)
-   call tecjointpdf(pdf,x,y,nx,ny,caseid)
-   call marginalpdf(pdf,margx,margy,nx,ny,x,y,dx,dy)
-   call tecfunc('PDFJx',margx,x,nx,'x','')
-   call tecfunc('PDFJy',margy,y,ny,'y','')
+   real pdff(nxx,nyy),pdfff(nqq,nxx,nyy), margxx(nxx), margyy(nyy)
+   if (sigw==0.0) then
+      k=1
+      do j=1,nyy
+      do i=1,nxx
+         pdff(i,j)=exp( -0.5*(xx(i)-x0)**2/siga**2                  &
+                        -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2 )
+      enddo
+      enddo
+
+   elseif (sigw > 0.0) then
+      do j=1,nyy
+      do i=1,nxx
+      do k=1,nqq
+         pdfff(k,i,j)=exp( -0.5*(qq(k))**2/sigw**2                  & 
+                           -0.5*(xx(i)-x0)**2/siga**2               &
+                           -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2 )
+      enddo
+      enddo
+      enddo
+
+      pdff(:,:)=0.0
+      do j=1,nyy
+      do i=1,nxx
+         pdff(i,j)=sum(pdfff(1:nqq,i,j))
+      enddo
+      enddo
+   endif 
+
+   sump=sum(pdff(:,:))*dxx*dyy
+   pdff=pdff/sump
+   call getcaseid(caseid,'PRIOR  ',-1.0,-1,esamp,sigw,0)
+   call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
+   call marginalpdf(pdff,margxx,margyy,nxx,nyy,xx,yy,dxx,dyy)
+   call tecfunc('margx'//caseid,margxx,xx,nxx,'x','PRIOR')
+   call tecfunc('margy'//caseid,margyy,yy,nyy,'y','PRIOR')
 
 end subroutine
 
 subroutine compute_cond_jointpdf(esamp)
 ! Definition of the analytical joint conditional pdf
-   integer i,j
+   integer i,j,k
    integer esamp
    real sump
    character(len=40) caseid
-   do j=1,ny
-   do i=1,nx
-      pdf(i,j)=exp(-0.5*(x(i)-x0)**2/siga**2            &
-                   -0.5*(y(j)-func(x(i),q(i)))**2/max(sigw,sigq)**2  &
-                   -0.5*(y(j)-d)**2/sigo**2)    
-   enddo
-   enddo
-   sump=sum(pdf(:,:))*dx*dy
-   pdf=pdf/sump
-   call getcaseid(caseid,'PDFC   ',-1.0,-1,esamp,sigw,0)
-   call tecjointpdf(pdf,x,y,nx,ny,caseid)
-   call marginalpdf(pdf,margx,margy,nx,ny,x,y,dx,dy)
-end subroutine
+   real pdff(nxx,nyy),pdfff(nqq,nxx,nyy), margxx(nxx), margyy(nyy)
 
+   if (sigw==0.0) then
+      k=1
+      do j=1,nyy
+      do i=1,nxx
+         pdff(i,j)=exp(-0.5*(xx(i)-x0)**2/siga**2                       &
+                       -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2        &
+                       -0.5*(yy(j)-d)**2/sigo**2)    
+      enddo
+      enddo
 
-subroutine compute_marginals(esamp)
-   integer i,j
-   integer esamp
-   margx(:)=0.0
-   do i=1,nx
-   do j=1,ny
-      if (sigw==0.0) then
-         margx(i)=margx(i)+exp(-0.5*(x(i)-x0 )**2/siga**2                   &
-                               -0.5*(d-func(x(i),q(i)))**2/sigo**2)
-      else 
-         margx(i)=margx(i)+exp(-0.5*(x(i)-x0 )**2/siga**2                   &
-                               -0.5*(q(j)-0.0)**2/max(sigw,0.0001)**2  & 
-                               -0.5*(d-func(x(i),q(i))-q(j))**2/sigo**2)
-      endif
-   enddo
-   enddo
-   margx=margx/(sum(margx(:))*dx)
-   call tecfunc('PDFCx',margx,x,nx,'x','')
-   call tecfunc('PDFCy',margy,y,ny,'y','')
+   elseif (sigw > 0.0) then
+      do j=1,nyy
+      do i=1,nxx
+      do k=1,nqq
+         pdfff(k,i,j)=exp( -0.5*(qq(k))**2/sigw**2                      & 
+                           -0.5*(xx(i)-x0)**2/siga**2                   &
+                           -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2    &
+                           -0.5*(yy(j)-d)**2/sigo**2)    
+      enddo
+      enddo
+      enddo
+
+      do j=1,nyy
+      do i=1,nxx
+         pdff(i,j)=sum(pdfff(1:nqq,i,j))
+      enddo
+      enddo
+   endif
+
+   sump=sum(pdff(:,:))*dxx*dyy
+   pdff=pdff/sump
+   call getcaseid(caseid,'BAYES  ',-1.0,-1,esamp,sigw,0)
+   call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
+   call marginalpdf(pdff,margxx,margyy,nxx,nyy,xx,yy,dxx,dyy)
+   call tecfunc('margx'//caseid,margxx,xx,nxx,'x','BAYES')
+   call tecfunc('margy'//caseid,margyy,yy,nyy,'y','BAYES')
 end subroutine
 
 end module

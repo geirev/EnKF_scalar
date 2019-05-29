@@ -24,7 +24,8 @@ program iterative_smoothers
    implicit none
    integer nrsamp,esamp
 
-   character(len=7) :: method(0:5)=['INI    ','ES     ','IES    ','SIES   ', 'ESMDA  ', 'EnSTEIN']
+   character(len=7) :: method(0:5) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','EnSTEIN']
+   logical          :: lactive(0:5)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   /)
    character(len=1) :: variable(1:2)=['x','q']
 
    real, allocatable :: xsampini(:), xsamp(:)
@@ -86,7 +87,7 @@ program iterative_smoothers
          print *,'#5: error in infile.in'
          stop
       endif
-      read(10,*)lmda          ; print '(a,tr10,l1)',  'Run MDA                    :',lmda
+      read(10,*)lmda          ; print '(a,tr10,l1)',  'Run MDA                    :',lmda; lactive(4)=lmda
       read(10,*)nmda          ; print '(a,tr7,i3)',   'number of mda iterations   :',nmda
       read(10,*)alphageo      ; print '(a,f10.3)',    'geometrical alpha value    :',alphageo
       read(10,'(a)')ca
@@ -94,7 +95,7 @@ program iterative_smoothers
          print *,'#6: error in infile.in'
          stop
       endif
-      read(10,*)lies          ; print '(a,tr10,l1)',  'Run IES                    :',lies
+      read(10,*)lies          ; print '(a,tr10,l1)',  'Run IES                    :',lies ; lactive(2)=lies
       read(10,*)maxiesit      ; print '(a,i5)',       'maxiesit                   :',maxiesit
       read(10,*)gamma_ies     ; print '(a,f10.3)',    'gamma_ies                  :',gamma_ies
       read(10,*)IESv          ; print '(a,i1)',       'IESv                       :',IESv
@@ -103,7 +104,7 @@ program iterative_smoothers
          print *,'#7: error in infile.in'
          stop
       endif
-      read(10,*)lsies         ; print '(a,tr10,l1)',  'Run SIES                   :',lsies
+      read(10,*)lsies         ; print '(a,tr10,l1)',  'Run SIES                   :',lsies ; lactive(3)=lsies
       read(10,*)maxsiesit     ; print '(a,i5)',       'maxiesit                   :',maxsiesit
       read(10,*)gamma_sies    ; print '(a,f10.3)',    'gamma_sies                 :',gamma_sies
       read(10,'(a)')ca
@@ -111,7 +112,7 @@ program iterative_smoothers
          print *,'#8: error in infile.in'
          stop
       endif
-      read(10,*)lenstein      ; print '(a,tr10,l1)',  'Run EnSTEIN                :',lenstein
+      read(10,*)lenstein      ; print '(a,tr10,l1)',  'Run EnSTEIN                :',lenstein; lactive(5)=lenstein
       read(10,*)maxensteinit  ; print '(a,i5)',       'maxiesit                   :',maxensteinit
       read(10,*)gamma_enstein ; print '(a,f10.3)',    'gamma_sies                 :',gamma_enstein
    close(10)
@@ -139,7 +140,7 @@ program iterative_smoothers
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Grid domain for plotting pdfs in x, q, and y
-   call xyqgrid(x,y,q)
+   call xyqgrid()
 
    call compute_prior()
 
@@ -150,8 +151,6 @@ program iterative_smoothers
    call compute_uncond_jointpdf(esamp)
 
    call compute_cond_jointpdf(esamp)
-
-   call compute_marginals(esamp)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Ensemble initialization
@@ -194,26 +193,29 @@ program iterative_smoothers
 
    allocate(xsamp(nrsamp), qsamp(nrsamp), ysamp(nrsamp))
    do j=0,5
-      if (ladjoints) then
-         if (trim(method(j)) == 'ES')    method(j)='ESAD   '
-         if (trim(method(j)) == 'IES')   method(j)='IESAD  '
-         if (trim(method(j)) == 'ESMDA') method(j)='ESMDAD '
+      if (lactive(j)) then
+         print '(a,a)','printing :',trim(method(j))
+         if (ladjoints) then
+            if (trim(method(j)) == 'ES')    method(j)='ESAD   '
+            if (trim(method(j)) == 'IES')   method(j)='IESAD  '
+            if (trim(method(j)) == 'ESMDA') method(j)='ESMDAD '
+         endif
+         do i=1,nrsamp
+            xsamp(i)=samples(i,1,j)
+            qsamp(i)=samples(i,2,j)
+            ysamp(i)=func(xsamp(i),ysamp(i))
+            if (sigw < sigq) ysamp(i)=ysamp(i)+sigq*normal()
+         enddo
+         if (trim(method(j)) == 'ESMDA') then
+            call getcaseid(caseid,method(j),alphageo,nmda,esamp,sigw,0)
+         else
+            call getcaseid(caseid,method(j),-1.0,-1,esamp,sigw,0)
+         endif
+         call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
+         call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
+         call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
+         if (sigw > 0.0) call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
       endif
-      do i=1,nrsamp
-         xsamp(i)=samples(i,1,j)
-         qsamp(i)=samples(i,2,j)
-         ysamp(i)=func(xsamp(i),ysamp(i))
-         if (sigw < sigq) ysamp(i)=ysamp(i)+sigq*normal()
-      enddo
-      if (trim(method(j)) == 'ESMDA') then
-         call getcaseid(caseid,method(j),alphageo,nmda,esamp,sigw,0)
-      else
-         call getcaseid(caseid,method(j),-1.0,-1,esamp,sigw,0)
-      endif
-      call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
-      call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-      call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-      call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
    enddo
    deallocate(xsamp, qsamp, ysamp)
 
