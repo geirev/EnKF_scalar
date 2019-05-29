@@ -42,15 +42,9 @@ subroutine iniens(samples,xf,qf,yf,dpert,nrsamp,esamp)
    do i=1,nrsamp
       dpert(i)=d+sigo*normal()
    enddo
-   print *,'Sampling done'
+   print '(a)','Sampling done'
    samples(:,1)=xf(:)
    samples(:,2)=qf(:)
-
-!   call getcaseid(caseid,'INI',-1.0,-1,esamp,sigw,0)
-!   call tecpdf(x,y,nx,ny,xf,yf,nrsamp,xa,ya,dx,dy,caseid)
-!   call tecmargpdf('x',xf,nrsamp,caseid,xa,xb,nx)
-!   call tecmargpdf('y',yf,nrsamp,caseid,ya,yb,ny)
-!   call tecmargpdf('q',qf,nrsamp,caseid,qa,qb,nx)
 
 end subroutine
 end module

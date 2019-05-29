@@ -63,17 +63,6 @@ subroutine es(samples,xf,qf,dpert,nrsamp,esamp)
 
    enddo
 
-!   if (sigw < sigq) then
-!      do i=1,nrsamp
-!         ysamp(i)=ysamp(i)+sigq*normal()
-!      enddo
-!   endif
-!   call getcaseid(caseid,'ES',-1.0,-1,esamp,sigw,0)
-!   call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
-!   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-!   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-!   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
-!
    samples(:,1)=xsamp(:)
    samples(:,2)=qsamp(:)
    deallocate(xsamp,ysamp,qsamp)

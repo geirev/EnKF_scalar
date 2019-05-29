@@ -131,16 +131,6 @@ contains
    samples(:,1)=xsamp(:)
    samples(:,2)=qsamp(:)
 
-!  Recomputing ysamp with some noise for nicer plotting
-!   if (sigw < sigq) then
-!      do n=1,nrsamp
-!         ysamp(n)=ysamp(n)+sigq*normal()
-!      enddo
-!   endif
-!   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-!   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-!   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
-!      call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
    deallocate(xsamp,ysamp,qsamp,iconv)
    write(*,'(a)')'Stein analysis completed'
    write(*,'(a)')'++++++++++++++++++++++++++++++++++++++++++++++'

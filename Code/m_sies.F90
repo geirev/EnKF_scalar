@@ -117,6 +117,10 @@ contains
 !      print '("Time = ",g13.5," seconds.")',finish-start
 
    do i=1,maxsiesit
+      if (mod(i,1) == 0) then
+         write(*,'(a,i4)',advance='yes')'iteration=',i
+      endif
+
       YY(1,:)=(Yi(1,:) - sum(Yi(1,1:nrsamp))/real(nrsamp)) / n1
 
 
@@ -225,21 +229,8 @@ contains
 
    enddo
 
-
    samples(:,1)=Ei(1,:)
    samples(:,2)=Ei(2,:)
-
-
-!  Recomputing ysamp with some noise for nicer plotting
-!   if (sigw < sigq) then
-!      do n=1,nrsamp
-!         ysamp(n)=ysamp(n)+sigq*normal()
-!      enddo
-!   endif
-!   call getcaseid(caseid,'SIES',-1.0,-1,esamp,sigw,0)
-!   call tecmargpdf('x',Ei(1,1:nrsamp),nrsamp,caseid,xa,xb,nx)
-!   call tecmargpdf('q',Ei(2,1:nrsamp),nrsamp,caseid,qa,qb,nx)
-!   call tecmargpdf('y',Yi(1,1:nrsamp),nrsamp,caseid,ya,yb,ny)
 
    deallocate(xsamp,ysamp,qsamp,iconv)
    deallocate(W, WW )

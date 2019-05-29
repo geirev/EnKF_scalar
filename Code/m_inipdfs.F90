@@ -59,6 +59,7 @@ subroutine compute_costfunction()
          costx(i)=(xx(i)-x0)**2/siga**2 + (func(xx(i),qq(k))-d)**2/sigo**2    
       enddo
       call tecfunc('costfx',costx,xx,nxx,'x','')
+      print '(a)','Cost function printed to costfx.dat'
    elseif (sigw > 0.0) then
       do j=1,nqq
       do i=1,nxx
@@ -66,6 +67,7 @@ subroutine compute_costfunction()
       enddo
       enddo
       call tecjointpdf(costxq,xx,yy,nxx,nyy,'costxq')
+      print '(a)','Cost function 2D printed to costxq.dat'
    endif
 end subroutine
 

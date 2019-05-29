@@ -75,17 +75,6 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    samples(:,1)=xsamp(:)
    samples(:,2)=qsamp(:)
 
-!   if (sigw < sigq) then
-!!      do i=1,nrsamp
-!         ysamp(i)=ysamp(i)+sigq*normal()
-!      enddo
-!   endif
-!   call getcaseid(caseid,'MDA',alphageo,nmda,esamp,sigw,0)
-!   call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
-!   call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
-!   call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-!   call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
-
    write(*,'(a,f8.2)')'ES-MDA analysis completed.  alphasum=',alphasum
    write(*,'(a)')'++++++++++++++++++++++++++++++++++++++++++++++'
    write(*,'(a)')
