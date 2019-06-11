@@ -1,147 +1,43 @@
-!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
-!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
-!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
-!_TAG_PROGRAM_NAME	Exuberant Ctags	//
-!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-900	m_tecjointpdf.F90	/^   900 format(10(1x,e16.9))$/;"	l	subroutine:tecjointpdf	file:
-900	m_tecpdf.F90	/^   900 format(10(1x,e16.9))$/;"	l	subroutine:tecpdf	file:
-IESv	m_ies.F90	/^integer, save :: IESv /;"	v	module:m_ies
-aaprojection	m_aaprojection.F90	/^subroutine aaprojection(/;"	s	module:m_aaprojection
-alphageo	m_esmda.F90	/^real,    save :: alphageo /;"	v	module:m_esmda
-avevar	m_avevar.F90	/^subroutine avevar(/;"	s	module:m_avevar
-beta	m_func.F90	/^   real, save ::  beta /;"	v	module:m_func
-cdd	mod_inistat.F90	/^   real, save :: cdd$/;"	v	module:mod_inistat
-compute_cond_jointpdf	m_inipdfs.F90	/^subroutine compute_cond_jointpdf(/;"	s	module:m_inipdfs
-compute_costfunction	m_inipdfs.F90	/^subroutine compute_costfunction(/;"	s	module:m_inipdfs
-compute_likelihood	m_inipdfs.F90	/^subroutine compute_likelihood(/;"	s	module:m_inipdfs
-compute_marginals	m_inipdfs.F90	/^subroutine compute_marginals(/;"	s	module:m_inipdfs
-compute_prior	m_inipdfs.F90	/^subroutine compute_prior(/;"	s	module:m_inipdfs
-compute_uncond_jointpdf	m_inipdfs.F90	/^subroutine compute_uncond_jointpdf(/;"	s	module:m_inipdfs
-cost	mod_xyqgrid.F90	/^   real, save :: datum(ny), prior(nx), pdf(nx,ny), cost(/;"	v	module:mod_xyqgrid
-cov	m_cov.F90	/^subroutine cov(/;"	s	module:m_cov
-cyyreg	m_cyyreg.F90	/^real function cyyreg(/;"	f	module:m_cyyreg
-d	mod_inistat.F90	/^   real, save :: d /;"	v	module:mod_inistat
-datum	mod_xyqgrid.F90	/^   real, save :: datum(/;"	v	module:mod_xyqgrid
-ddfunc	m_func.F90	/^real function ddfunc(/;"	f	module:m_func
-ddjxfunc	m_iescostf.F90	/^real function ddjxfunc(/;"	f	module:m_iescostf
-dfunc	m_func.F90	/^real function dfunc(/;"	f	module:m_func
-djxfunc	m_iescostf.F90	/^real function djxfunc(/;"	f	module:m_iescostf
-dq	mod_xyqgrid.F90	/^   real, save :: dx,dy,dq$/;"	v	module:mod_xyqgrid
-dx	mod_xyqgrid.F90	/^   real, save :: dx,/;"	v	module:mod_xyqgrid
-dy	mod_xyqgrid.F90	/^   real, save :: dx,dy,/;"	v	module:mod_xyqgrid
-enstein	m_enstein.F90	/^   subroutine enstein(/;"	s	module:m_enstein
-es	m_es.F90	/^subroutine es(/;"	s	module:m_es
-esamp	pdf.F90	/^   integer nrsamp,esamp$/;"	v	program:iterative_smoothers
-esmda	m_esmda.F90	/^subroutine esmda(/;"	s	module:m_esmda
-func	m_func.F90	/^real funct/;"	f	module:m_func
-funcmode	m_func.F90	/^   integer, save ::  funcmode /;"	v	module:m_func
-gamma_enstein	m_enstein.F90	/^real,    save :: gamma_enstein /;"	v	module:m_enstein
-gamma_ies	m_ies.F90	/^real,    save :: gamma_ies /;"	v	module:m_ies
-gamma_sies	m_sies.F90	/^real,    save :: gamma_sies /;"	v	module:m_sies
-getalpha	m_getalpha.F90	/^real function getalpha(/;"	f	module:m_getalpha
-getcaseid	m_getcaseid.F90	/^subroutine getcaseid(/;"	s	module:m_getcaseid
-ies	m_ies.F90	/^   subroutine ies(/;"	s	module:m_ies
-ies_eps	m_ies.F90	/^real, save :: ies_eps=/;"	v	module:m_ies
-iniens	m_iniens.F90	/^subroutine iniens(/;"	s	module:m_iniens
-integrals	m_integrals.F90	/^subroutine integrals(/;"	s	module:m_integrals
-iterative_smoothers	pdf.F90	/^program iterative_smoothers$/;"	p
-jxfunc	m_iescostf.F90	/^real function jxfunc(/;"	f	module:m_iescostf
-lactivepdf	m_tecpdf.F90	/^logical, save :: lactivepdf$/;"	v	module:m_tecpdf
-lcyyreg	m_cyyreg.F90	/^logical, save :: lcyyreg$/;"	v	module:m_cyyreg
-lenstein	m_enstein.F90	/^logical, save :: lenstein /;"	v	module:m_enstein
-les	m_es.F90	/^logical, save :: les=/;"	v	module:m_es
-lesadjoint	m_es.F90	/^logical, save :: lesadjoint=/;"	v	module:m_es
-lesmdaadjoint	m_esmda.F90	/^logical, save :: lesmdaadjoint=/;"	v	module:m_esmda
-lies	m_ies.F90	/^logical, save :: lies /;"	v	module:m_ies
-liesadjoint	m_ies.F90	/^logical, save :: liesadjoint=/;"	v	module:m_ies
-lmda	m_esmda.F90	/^logical, save :: lmda /;"	v	module:m_esmda
-lsies	m_sies.F90	/^logical, save :: lsies /;"	v	module:m_sies
-m_aaprojection	m_aaprojection.F90	/^module m_aaprojection$/;"	m
-m_avevar	m_avevar.F90	/^module m_avevar$/;"	m
-m_cov	m_cov.F90	/^module m_cov$/;"	m
-m_cyyreg	m_cyyreg.F90	/^module m_cyyreg$/;"	m
-m_enstein	m_enstein.F90	/^module m_enstein$/;"	m
-m_es	m_es.F90	/^module m_es$/;"	m
-m_esmda	m_esmda.F90	/^module m_esmda$/;"	m
-m_func	m_func.F90	/^module m_func$/;"	m
-m_getalpha	m_getalpha.F90	/^module m_getalpha$/;"	m
-m_getcaseid	m_getcaseid.F90	/^module m_getcaseid$/;"	m
-m_ies	m_ies.F90	/^module m_ies$/;"	m
-m_iescostf	m_iescostf.F90	/^module m_iescostf$/;"	m
-m_iniens	m_iniens.F90	/^module m_iniens$/;"	m
-m_inipdfs	m_inipdfs.F90	/^module m_inipdfs$/;"	m
-m_integrals	m_integrals.F90	/^module m_integrals /;"	m
-m_marginalpdf	m_marginalpdf.F90	/^module m_marginalpdf$/;"	m
-m_moments	m_moments.F90	/^module m_moments$/;"	m
-m_normal	m_normal.F90	/^module m_normal$/;"	m
-m_omegafact	m_omegafact.F90	/^module m_omegafact$/;"	m
-m_printcostf	m_printcostf.F90	/^module m_printcostf$/;"	m
-m_pseudoinv	m_pseudoinv.F90	/^module m_pseudoinv$/;"	m
-m_pseudoinv2	m_pseudoinv2.F90	/^module m_pseudoinv2$/;"	m
-m_set_random_seed2	m_set_random_seed2.F90	/^module m_set_random_seed2$/;"	m
-m_sies	m_sies.F90	/^module m_sies$/;"	m
-m_steinkern	m_steinkern.F90	/^module m_steinkern$/;"	m
-m_teccostens	m_teccostens.F90	/^module m_teccostens$/;"	m
-m_tecfunc	m_tecfunc.F90	/^module m_tecfunc$/;"	m
-m_tecjointpdf	m_tecjointpdf.F90	/^module m_tecjointpdf$/;"	m
-m_tecmargpdf	m_tecmargpdf.F90	/^module m_tecmargpdf$/;"	m
-m_tecpdf	m_tecpdf.F90	/^module m_tecpdf$/;"	m
-m_tecsampini	m_tecsampini.F90	/^module m_tecsampini$/;"	m
-m_tecstat	m_tecstat.F90	/^   module m_tecstat$/;"	m
-m_tecstatIES	m_tecstatIES.F90	/^   module m_tecstatIES$/;"	m
-marginalpdf	m_marginalpdf.F90	/^subroutine marginalpdf(/;"	s	module:m_marginalpdf
-margq	mod_xyqgrid.F90	/^   real, save :: margx(nx), margy(ny), margq(/;"	v	module:mod_xyqgrid
-margx	mod_xyqgrid.F90	/^   real, save :: margx(/;"	v	module:mod_xyqgrid
-margy	mod_xyqgrid.F90	/^   real, save :: margx(nx), margy(/;"	v	module:mod_xyqgrid
-maxensteinit	m_enstein.F90	/^integer, save :: maxensteinit /;"	v	module:m_enstein
-maxiesit	m_ies.F90	/^integer, save :: maxiesit /;"	v	module:m_ies
-maxsiesit	m_sies.F90	/^integer, save :: maxsiesit /;"	v	module:m_sies
-method	pdf.F90	/^   character(len=7) :: method(/;"	v	program:iterative_smoothers
-mod_inistat	mod_inistat.F90	/^module mod_inistat$/;"	m
-mod_xyqgrid	mod_xyqgrid.F90	/^module mod_xyqgrid$/;"	m
-moments	m_moments.F90	/^subroutine moments(/;"	s	module:m_moments
-ndim	m_enstein.F90	/^integer, parameter :: ndim=/;"	v	module:m_enstein
-ndim	m_sies.F90	/^integer, parameter :: ndim=/;"	v	module:m_sies
-nmda	m_esmda.F90	/^integer, save :: nmda /;"	v	module:m_esmda
-normal	m_normal.F90	/^real function normal(/;"	f	module:m_normal
-nq	mod_xyqgrid.F90	/^   integer, parameter :: nq=/;"	v	module:mod_xyqgrid
-nrits	m_printcostf.F90	/^integer, parameter :: nrits=/;"	v	module:m_printcostf
-nrobs	m_sies.F90	/^integer, parameter :: nrobs=/;"	v	module:m_sies
-nrsamp	pdf.F90	/^   integer nrsamp,/;"	v	program:iterative_smoothers
-nx	mod_xyqgrid.F90	/^   integer, parameter :: nx=/;"	v	module:mod_xyqgrid
-ny	mod_xyqgrid.F90	/^   integer, parameter :: ny=/;"	v	module:mod_xyqgrid
-omegafact	m_omegafact.F90	/^subroutine omegafact(/;"	s	module:m_omegafact
-pdf	mod_xyqgrid.F90	/^   real, save :: datum(ny), prior(nx), pdf(/;"	v	module:mod_xyqgrid
-pi	m_func.F90	/^   real, parameter :: pi=/;"	v	module:m_func
-printcostf	m_printcostf.F90	/^subroutine printcostf(/;"	s	module:m_printcostf
-prior	mod_xyqgrid.F90	/^   real, save :: datum(ny), prior(/;"	v	module:mod_xyqgrid
-pseudoinv	m_pseudoinv.F90	/^subroutine pseudoinv(/;"	s	module:m_pseudoinv
-pseudoinv2	m_pseudoinv2.F90	/^subroutine pseudoinv2(/;"	s	module:m_pseudoinv2
-q	mod_xyqgrid.F90	/^   real, save :: x(nx), y(ny), q(/;"	v	module:mod_xyqgrid
-qa	mod_xyqgrid.F90	/^   real, save :: xa,xb,ya,yb,qa,/;"	v	module:mod_xyqgrid
-qb	mod_xyqgrid.F90	/^   real, save :: xa,xb,ya,yb,qa,qb /;"	v	module:mod_xyqgrid
-set_random_seed2	m_set_random_seed2.F90	/^subroutine set_random_seed2$/;"	s	module:m_set_random_seed2
-sies	m_sies.F90	/^   subroutine sies(/;"	s	module:m_sies
-sies_eps	m_sies.F90	/^real, save :: sies_eps=/;"	v	module:m_sies
-siga	mod_inistat.F90	/^   real, save :: siga /;"	v	module:mod_inistat
-sigo	mod_inistat.F90	/^   real, save :: sigo /;"	v	module:mod_inistat
-sigq	mod_inistat.F90	/^   real, parameter :: sigq=/;"	v	module:mod_inistat
-sigw	mod_inistat.F90	/^   real, save :: sigw /;"	v	module:mod_inistat
-steinkern	m_steinkern.F90	/^   real function steinkern(/;"	f	module:m_steinkern
-teccostens	m_teccostens.F90	/^subroutine teccostens(/;"	s	module:m_teccostens
-tecfunc	m_tecfunc.F90	/^subroutine tecfunc(/;"	s	module:m_tecfunc
-tecjointpdf	m_tecjointpdf.F90	/^   subroutine tecjointpdf(/;"	s	module:m_tecjointpdf
-tecmargpdf	m_tecmargpdf.F90	/^subroutine tecmargpdf(/;"	s	module:m_tecmargpdf
-tecpdf	m_tecpdf.F90	/^   subroutine tecpdf(/;"	s	module:m_tecpdf
-tecsampini	m_tecsampini.F90	/^subroutine tecsampini(/;"	s	module:m_tecsampini
-tecstat	m_tecstat.F90	/^   subroutine tecstat(/;"	s	module:m_tecstat
-tecstatIES	m_tecstatIES.F90	/^   subroutine tecstatIES(/;"	s	module:m_tecstatIES
-x	mod_xyqgrid.F90	/^   real, save :: x(/;"	v	module:mod_xyqgrid
-x0	mod_inistat.F90	/^   real, save :: x0 /;"	v	module:mod_inistat
-xa	mod_xyqgrid.F90	/^   real, save :: xa,/;"	v	module:mod_xyqgrid
-xb	mod_xyqgrid.F90	/^   real, save :: xa,xb,/;"	v	module:mod_xyqgrid
-xyqgrid	mod_xyqgrid.F90	/^   subroutine xyqgrid(/;"	s	module:mod_xyqgrid
-y	mod_xyqgrid.F90	/^   real, save :: x(nx), y(/;"	v	module:mod_xyqgrid
-ya	mod_xyqgrid.F90	/^   real, save :: xa,xb,ya,/;"	v	module:mod_xyqgrid
-yb	mod_xyqgrid.F90	/^   real, save :: xa,xb,ya,yb,/;"	v	module:mod_xyqgrid
+aaprojection	m_aaprojection.F90	/^subroutine aaprojection(A,AA,ndim,nrsamp,truncatio/
+avevar	m_avevar.F90	/^subroutine avevar(datavector,nrsamp,ave,var)$/
+compute_cond_jointpdf	m_inipdfs.F90	/^subroutine compute_cond_jointpdf(esamp)$/
+compute_costfunction	m_inipdfs.F90	/^subroutine compute_costfunction()$/
+compute_likelihood	m_inipdfs.F90	/^subroutine compute_likelihood()$/
+compute_prior	m_inipdfs.F90	/^subroutine compute_prior()$/
+compute_uncond_jointpdf	m_inipdfs.F90	/^subroutine compute_uncond_jointpdf(esamp)$/
+cov	m_cov.F90	/^subroutine cov(Cxx,Cyy,Cqq,Cxy,Cqy,Cqx,xsamp,ysamp/
+cyyreg	m_cyyreg.F90	/^real function cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)$/
+ddfunc	m_func.F90	/^real function ddfunc(x,q)$/
+ddjxfunc	m_iescostf.F90	/^real function ddjxfunc(x,xf,dpert)$/
+dfunc	m_func.F90	/^real function dfunc(x,q)$/
+djxfunc	m_iescostf.F90	/^real function djxfunc(x,xf,dpert)$/
+enstein	m_enstein.F90	/^   subroutine enstein(samples,xf,qf,nrsamp,esamp)$/
+es	m_es.F90	/^subroutine es(samples,xf,qf,dpert,nrsamp,esamp)$/
+esmda	m_esmda.F90	/^subroutine esmda(samples,xsampini,qsampini,nrsamp,/
+func	m_func.F90	/^real function func(x,q)$/
+getalpha	m_getalpha.F90	/^real function getalpha(n,nmda,alphageo)$/
+getcaseid	m_getcaseid.F90	/^subroutine getcaseid(caseid,esmethod,alphageo,nmda/
+ies	m_ies.F90	/^   subroutine ies(samples,xf,qf,nrsamp,esamp,dpert/
+iese	m_iese.F90	/^   subroutine iese(samples,xf,qf,nrsamp,esamp,datu/
+iniens	m_iniens.F90	/^subroutine iniens(samples,xf,qf,yf,dpert,nrsamp,es/
+integrals	m_integrals.F90	/^subroutine integrals(maxiesit)$/
+jxfunc	m_iescostf.F90	/^real function jxfunc(x,xf,dpert)$/
+marginalpdf	m_marginalpdf.F90	/^subroutine marginalpdf(pdf,margx,margy,nx,ny,x,y,d/
+moments	m_moments.F90	/^subroutine moments(datavector,nrsamp,ave,adev,sdev/
+normal	m_normal.F90	/^real function normal()$/
+omegafact	m_omegafact.F90	/^subroutine omegafact(nrsamp,Omega)$/
+printcostf	m_printcostf.F90	/^subroutine printcostf(xsampini,xsamp,dpert,nrsamp)/
+pseudoinv	m_pseudoinv.F90	/^subroutine pseudoinv(W,Wi,n,nrsamp,truncation)$/
+pseudoinv2	m_pseudoinv2.F90	/^subroutine pseudoinv2(W,n,nrsamp,truncation)$/
+set_random_seed2	m_set_random_seed2.F90	/^subroutine set_random_seed2$/
+sies	m_sies.F90	/^   subroutine sies(samples,xf,qf,nrsamp,esamp,dper/
+steinkern	m_steinkern.F90	/^   real function steinkern(s1,s2,h,ndim)$/
+teccostens	m_teccostens.F90	/^subroutine teccostens(fname,y,x,nx,nr,cxvar)$/
+tecfunc	m_tecfunc.F90	/^subroutine tecfunc(fname,y,x,nx,cxvar,czone)$/
+tecjointpdf	m_tecjointpdf.F90	/^   subroutine tecjointpdf(pdf,x,y,nx,ny,caseid)$/
+tecmargpdf	m_tecmargpdf.F90	/^subroutine tecmargpdf(id,qsamp,nrsamp,caseid,xmin,/
+tecpdf	m_tecpdf.F90	/^   subroutine tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,/
+tecsampini	m_tecsampini.F90	/^subroutine tecsampini(fname,cost,x,nit,nr)$/
+tecstat	m_tecstat.F90	/^   subroutine tecstat(fname,esmethod,nmda,alpha,av/
+tecstatIES	m_tecstatIES.F90	/^   subroutine tecstatIES(fname,esmethod,ave,var,sk/
+xyqgrid	mod_xyqgrid.F90	/^subroutine xyqgrid()$/

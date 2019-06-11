@@ -19,13 +19,14 @@ subroutine tecmargpdf(id,qsamp,nrsamp,caseid,xmin,xmax,nx,it)
    integer i,ival
    character(len=3) tag3
 
-   qmin=minval(qsamp); qmin=max(qmin,xmin)
-   qmax=maxval(qsamp); qmax=min(qmax,xmax)
-   qmin=xmin
-   qmax=xmax
-!   print *,'margq:',qmin,qmax,trim(id),trim(caseid)
+   qmin=minval(qsamp)
+!   qmin=max(qmin,xmin)
+   qmax=maxval(qsamp)
+!   qmax=min(qmax,xmax)
+!   qmin=xmin
+!   qmax=xmax
+   print *,'marg:',qmin,qmax,trim(id),trim(caseid)
    if (qmax == qmin) then
-!      print *,'returns'
       return
    endif
    
@@ -38,7 +39,6 @@ subroutine tecmargpdf(id,qsamp,nrsamp,caseid,xmin,xmax,nx,it)
    enddo
    ave=ave/real(nrsamp)
    var=var/real(nrsamp) - ave**2
-!   print '(a,3f10.3)','Statistics of marginal pdf for q (ave, var, std) :',ave,var,sqrt(var)
 
    pdf(:)=0.0
    do i =1,nrsamp

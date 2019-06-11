@@ -164,7 +164,7 @@ program iterative_smoothers
 ! IES
    if (lies) then
       call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,esamp,dpert)
-      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,esamp,dpert)
+      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,esamp,d)
    endif
 
 ! Subspace IES
@@ -206,7 +206,7 @@ program iterative_smoothers
          do i=1,nrsamp
             xsamp(i)=samples(i,1,j)
             qsamp(i)=samples(i,2,j)
-            ysamp(i)=func(xsamp(i),ysamp(i))
+            ysamp(i)=func(xsamp(i),qsamp(i))
             if (sigw < sigq) ysamp(i)=ysamp(i)+sigq*normal()
          enddo
          if (trim(method(j)) == 'ESMDA') then
