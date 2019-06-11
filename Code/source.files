@@ -10,6 +10,7 @@ MODULES = \
 	m_getalpha.F90\
 	m_getcaseid.F90\
 	m_iescostf.F90\
+	m_iese.F90\
 	m_ies.F90\
 	m_iniens.F90\
 	m_inipdfs.F90\

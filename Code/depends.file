@@ -53,6 +53,19 @@ m_iescostf.o:      makefile
 m_iescostf.o:      m_func.o
 m_iescostf.o:      MODEL.CPP
 m_iescostf.o:      mod_inistat.o
+m_iese.o:      makefile
+m_iese.o:      m_cov.o
+m_iese.o:      m_cyyreg.o
+m_iese.o:      m_func.o
+m_iese.o:      m_getcaseid.o
+m_iese.o:      m_iescostf.o
+m_iese.o:      m_normal.o
+m_iese.o:      MODEL.CPP
+m_iese.o:      mod_inistat.o
+m_iese.o:      mod_xyqgrid.o
+m_iese.o:      m_tecmargpdf.o
+m_iese.o:      m_tecpdf.o
+m_iese.o:      m_tecsampini.o
 m_ies.o:      makefile
 m_ies.o:      m_cov.o
 m_ies.o:      m_cyyreg.o
@@ -98,6 +111,7 @@ m_normal.o:      MODEL.CPP
 mod_inistat.o:      makefile
 mod_inistat.o:      MODEL.CPP
 mod_xyqgrid.o:      makefile
+mod_xyqgrid.o:      m_func.o
 mod_xyqgrid.o:      MODEL.CPP
 mod_xyqgrid.o:      mod_inistat.o
 m_omegafact.o:      makefile
@@ -156,6 +170,7 @@ pdf.o:      m_enstein.o
 pdf.o:      m_esmda.o
 pdf.o:      m_es.o
 pdf.o:      m_func.o
+pdf.o:      m_iese.o
 pdf.o:      m_ies.o
 pdf.o:      m_iniens.o
 pdf.o:      m_inipdfs.o

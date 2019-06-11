@@ -10,6 +10,7 @@ program iterative_smoothers
    use m_iniens
    use m_es
    use m_ies
+   use m_iese
    use m_sies
    use m_esmda
    use m_enstein
@@ -24,8 +25,9 @@ program iterative_smoothers
    implicit none
    integer nrsamp,esamp
 
-   character(len=7) :: method(0:5) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','EnSTEIN']
-   logical          :: lactive(0:5)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   /)
+   integer, parameter :: nrmethods=6
+   character(len=7) :: method(0:nrmethods) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','EnSTEIN','IESE   ']
+   logical          :: lactive(0:nrmethods)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   /)
    character(len=1) :: variable(1:2)=['x','q']
 
    real, allocatable :: xsampini(:), xsamp(:)
@@ -131,7 +133,7 @@ program iterative_smoothers
    nrsamp=1*nrsamp
 
    allocate(qsampini(nrsamp), xsampini(nrsamp) , ysampini(nrsamp), dpert(nrsamp))
-   allocate(samples(nrsamp,2,0:5)); samples=0.0
+   allocate(samples(nrsamp,2,0:nrmethods)); samples=0.0
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -162,6 +164,7 @@ program iterative_smoothers
 ! IES
    if (lies) then
       call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,esamp,dpert)
+      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,esamp,dpert)
    endif
 
 ! Subspace IES
@@ -183,7 +186,7 @@ program iterative_smoothers
 !   call avevar(dpert,nrsamp,ave,var)
 !   if (var > 0.0) write(*,'(4a,2g16.8,a,8g16.8)')'MEAS   ',' ',variable(1),' :',ave,sqrt(var),'  Samples:',dpert(1:8)
    do n=1,2
-   do j=1,5
+   do j=1,nrmethods
       call avevar(samples(1:nrsamp,n,j),nrsamp,ave,var)
       if (var > 0.0) write(*,'(4a,2g16.8,a,8g16.8)')method(j),' ',variable(n),' :',ave,sqrt(var),'  Samples:',samples(1:8,n,j)
    enddo
@@ -192,7 +195,7 @@ program iterative_smoothers
 
 
    allocate(xsamp(nrsamp), qsamp(nrsamp), ysamp(nrsamp))
-   do j=0,5
+   do j=0,nrmethods
       if (lactive(j)) then
          print '(a,a)','printing :',trim(method(j))
          if (ladjoints) then
