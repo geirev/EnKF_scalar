@@ -1,10 +1,10 @@
 module m_tecmargpdf
 contains
-subroutine tecmargpdf(id,qsamp,nrsamp,caseid,xmin,xmax,nx,it)
+subroutine tecmargpdf(id,xsamp,nrsamp,caseid,xmin,xmax,nx,it)
    use m_getcaseid
    implicit none
    integer, intent(in)  :: nrsamp
-   real,    intent(in)  :: qsamp(nrsamp)
+   real,    intent(in)  :: xsamp(nrsamp)
    integer, intent(in)  :: nx
    real,    intent(in)  :: xmin
    real,    intent(in)  :: xmax
@@ -15,34 +15,24 @@ subroutine tecmargpdf(id,qsamp,nrsamp,caseid,xmin,xmax,nx,it)
 
    character(len=80) :: fname
    real                 :: pdf(nx)
-   real qmin,qmax,dx,ave,var,sumpdf
+   real xxmin,xxmax,dx,sumpdf
    integer i,ival
    character(len=3) tag3
 
-   qmin=minval(qsamp)
-!   qmin=max(qmin,xmin)
-   qmax=maxval(qsamp)
-!   qmax=min(qmax,xmax)
-!   qmin=xmin
-!   qmax=xmax
-   print *,'marg:',qmin,qmax,trim(id),trim(caseid)
-   if (qmax == qmin) then
-      return
+   if (xmax == xmin) then
+      xxmin=minval(xsamp)
+      xxmax=maxval(xsamp)
+   else
+      xxmin=xmin
+      xxmax=xmax
    endif
+   if (xxmax == xxmin) return
    
-   dx=(qmax-qmin)/real(nx-1)
-   ave=0.0
-   var=0.0
-   do i =1,nrsamp
-      ave=ave+qsamp(i)
-      var=var+qsamp(i)**2
-   enddo
-   ave=ave/real(nrsamp)
-   var=var/real(nrsamp) - ave**2
+   dx=(xxmax-xxmin)/real(nx-1)
 
    pdf(:)=0.0
    do i =1,nrsamp
-      ival= nint((qsamp(i)-qmin)/dx) + 1
+      ival= nint((xsamp(i)-xxmin)/dx) + 1
       if (0 < ival .and. ival < nx+1) then
          pdf(ival)=pdf(ival)+1.0
       endif 
@@ -68,7 +58,7 @@ subroutine tecmargpdf(id,qsamp,nrsamp,caseid,xmin,xmax,nx,it)
       write(10,*)'ZONE T= "',trim(caseid)//'" F=POINT, I=',nx
       endif
       do i =1,nx
-         write(10,'(2f15.7)')qmin+real(i-1)*dx,pdf(i)
+         write(10,'(2f15.7)')xxmin+real(i-1)*dx,pdf(i)
       enddo
    close(10)
     

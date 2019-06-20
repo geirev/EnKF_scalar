@@ -51,12 +51,11 @@ end subroutine
 
 subroutine compute_costfunction()
 ! Definition of the strong constraint cost function
-   integer i,j,k
+   integer i,j
    real costxq(nxx,nqq),costx(nxx)
    if (sigw == 0.0) then
-      k=1
       do i=1,nxx
-         costx(i)=(xx(i)-x0)**2/siga**2 + (func(xx(i),qq(k))-d)**2/sigo**2    
+         costx(i)=(xx(i)-x0)**2/siga**2 + (func(xx(i),0.0)-d)**2/sigo**2    
       enddo
       call tecfunc('costfx',costx,xx,nxx,'x','')
       print '(a)','Cost function printed to costfx.dat'
@@ -80,11 +79,10 @@ subroutine compute_uncond_jointpdf(esamp)
    character(len=40) caseid
    real pdff(nxx,nyy),pdfff(nqq,nxx,nyy), margxx(nxx), margyy(nyy)
    if (sigw==0.0) then
-      k=1
       do j=1,nyy
       do i=1,nxx
          pdff(i,j)=exp( -0.5*(xx(i)-x0)**2/siga**2                  &
-                        -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2 )
+                        -0.5*(yy(j)-func(xx(i),0.0))**2/sigq**2 )
       enddo
       enddo
 
@@ -111,9 +109,9 @@ subroutine compute_uncond_jointpdf(esamp)
    pdff=pdff/sump
    call getcaseid(caseid,'PRIOR  ',-1.0,-1,esamp,sigw,0)
    call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
-   call marginalpdf(pdff,margxx,margyy,nxx,nyy,xx,yy,dxx,dyy)
+
+   call marginalpdf(pdff,margxx,margyy,nxx,nyy,dxx,dyy)
    call tecfunc('margx'//caseid,margxx,xx,nxx,'x','PRIOR')
-   call tecfunc('margy'//caseid,margyy,yy,nyy,'y','PRIOR')
 
 end subroutine
 
@@ -126,11 +124,10 @@ subroutine compute_cond_jointpdf(esamp)
    real pdff(nxx,nyy),pdfff(nqq,nxx,nyy), margxx(nxx), margyy(nyy)
 
    if (sigw==0.0) then
-      k=1
       do j=1,nyy
       do i=1,nxx
          pdff(i,j)=exp(-0.5*(xx(i)-x0)**2/siga**2                       &
-                       -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2        &
+                       -0.5*(yy(j)-func(xx(i),0.0))**2/sigq**2        &
                        -0.5*(yy(j)-d)**2/sigo**2)    
       enddo
       enddo
@@ -158,7 +155,8 @@ subroutine compute_cond_jointpdf(esamp)
    pdff=pdff/sump
    call getcaseid(caseid,'BAYES  ',-1.0,-1,esamp,sigw,0)
    call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
-   call marginalpdf(pdff,margxx,margyy,nxx,nyy,xx,yy,dxx,dyy)
+
+   call marginalpdf(pdff,margxx,margyy,nxx,nyy,dxx,dyy)
    call tecfunc('margx'//caseid,margxx,xx,nxx,'x','BAYES')
    call tecfunc('margy'//caseid,margyy,yy,nyy,'y','BAYES')
 end subroutine

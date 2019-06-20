@@ -130,7 +130,7 @@ program iterative_smoothers
    endif
 
    nrsamp=10**esamp
-   nrsamp=1*nrsamp
+   nrsamp=4*nrsamp
 
    allocate(qsampini(nrsamp), xsampini(nrsamp) , ysampini(nrsamp), dpert(nrsamp))
    allocate(samples(nrsamp,2,0:nrmethods)); samples=0.0
@@ -164,7 +164,8 @@ program iterative_smoothers
 ! IES
    if (lies) then
       call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,esamp,dpert)
-      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,esamp,d)
+      lactive(6)=liese
+!      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,esamp,d)
    endif
 
 ! Subspace IES

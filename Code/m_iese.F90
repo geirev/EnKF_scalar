@@ -11,7 +11,7 @@ use m_tecmargpdf
 use m_tecsampini
 use m_tecpdf
 implicit none
-logical, save :: liese=.true.         ! Run IESE or not
+logical, save :: liese=.false.         ! Run IESE or not
 integer, save :: maxieseit=400        ! maximumn number of iterations
 real,    save :: gamma_iese=0.4       ! step length used in IESE
 real,    save :: iese_eps=0.0000001

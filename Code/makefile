@@ -15,8 +15,8 @@ OPT_FFLAGS = -c -fdefault-real-8 -O3
 PAR = 
 DEBUG_FFLAGS = -c -g -fdefault-real-8 -C -u -Xlist -O2 -std=f2003 -fimplicit-none -frange-check -fmax-errors=10 -pedantic -pedantic-errors -Waliasing -Wampersand -Wcharacter-truncation -Wline-truncation -Wsurprising -Wno-tabs -Wunderflow -ffpe-trap=invalid,zero,overflow -Wunused -Werror -O3 
 
-FFLAGS =  $(DEBUG_FFLAGS)
 FFLAGS =  $(OPT_FFLAGS)
+FFLAGS =  $(DEBUG_FFLAGS)
 
 # run ulimit -c unlimited
 

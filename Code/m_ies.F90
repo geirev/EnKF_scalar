@@ -81,7 +81,7 @@ contains
    do i=1,maxiesit
       if (mod(i,1) == 0) then
          write(*,'(a,i4,a)',advance='no')'i=',i,'...'
-         print *,'converged realizations=', sumconv,nrsamp,real(100*sumconv)/real(nrsamp)
+         print '(a,i10,i10,f10.2)','converged realizations=', sumconv,nrsamp,real(100)*(real(sumconv)/real(nrsamp))
       endif
       call cov(Pxx,Pyy,Pqq,Pyx,Pqy,Pqx,xsamp,ysamp,qsamp,nrsamp)
       if (lcyyreg) Pyy=cyyreg(Pxx,Pqq,Pyx,Pqy,Pqx)
@@ -163,8 +163,8 @@ contains
       sumconv=sum(iconv(1:nrsamp))
       if (sumconv == nrsamp) then
          write(*,'(a,i4,a)',advance='no')'i=',i,'...'
-         print *,'converged realizations=', sumconv,nrsamp,real(100*sumconv)/real(nrsamp)
-         print *,'Exiting IES iterations'
+         print '(a,i10,i10,f10.2)','converged realizations=', sumconv,nrsamp,real(100)*(real(sumconv)/real(nrsamp))
+         print '(a)','Exiting IES iterations'
          exit
       endif
 
