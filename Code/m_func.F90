@@ -11,7 +11,7 @@ real function func(x,q)
    real, intent(in) :: q
    select case (funcmode)
    case(0)
-      func=x+beta*x**3 + q + q**3
+      func=x+beta*x**3 + q  !+ q**3
    case(1)
       func=1.0+beta*(x**3-x) + q  ! use with beta=2.62
    case(2)
