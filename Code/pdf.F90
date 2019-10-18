@@ -176,7 +176,7 @@ program iterative_smoothers
 ! ES 
    call es(samples(1:nrsamp,1:2,1),xsampini,qsampini,dpert,nrsamp)
 
-! ESe 
+! ESe identical to ES
    if (lese) then
       call ese(samples(1:nrsamp,1:2,7),xsampini,qsampini,dpert,nrsamp)
    endif
@@ -186,9 +186,10 @@ program iterative_smoothers
       call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,dpert)
    endif
 
-! IESe
+! IESe  erroneos trial
    if (liese) then
-      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,d)
+     stop 'lies should not be true '
+     ! call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,d)
    endif
 
 ! Subspace IES
