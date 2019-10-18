@@ -3,6 +3,7 @@ use mod_xyqgrid
 use mod_inistat
 use m_func
 use m_tecfunc
+use m_jointpdf
 use m_tecjointpdf
 use m_getcaseid
 use m_marginalpdf
@@ -65,8 +66,10 @@ subroutine compute_costfunction()
          costxq(i,j)=(xx(i)-x0)**2/siga**2 + (qq(j))**2/sigw**2 + (func(xx(i),qq(j))-d)**2/sigo**2    
       enddo
       enddo
-      call tecjointpdf(costxq,xx,yy,nxx,nyy,'costxq')
-      print '(a)','Cost function 2D printed to costxq.dat'
+      if (lactivepdf) then
+         call tecjointpdf(costxq,xx,yy,nxx,nyy,'costxq')
+         print '(a)','Cost function 2D printed to costxq.dat'
+      endif
    endif
 end subroutine
 
@@ -108,10 +111,13 @@ subroutine compute_uncond_jointpdf(esamp)
    sump=sum(pdff(:,:))*dxx*dyy
    pdff=pdff/sump
    call getcaseid(caseid,'PRIOR  ',-1.0,-1,esamp,sigw,0)
-   call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
+   if (lactivepdf) then
+      call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
+   endif
 
    call marginalpdf(pdff,margxx,margyy,nxx,nyy,dxx,dyy)
    call tecfunc('margx'//caseid,margxx,xx,nxx,'x','PRIOR')
+   call tecfunc('margy'//caseid,margyy,yy,nyy,'y','PRIOR')
 
 end subroutine
 
@@ -154,7 +160,9 @@ subroutine compute_cond_jointpdf(esamp)
    sump=sum(pdff(:,:))*dxx*dyy
    pdff=pdff/sump
    call getcaseid(caseid,'BAYES  ',-1.0,-1,esamp,sigw,0)
-   call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
+   if (lactivepdf) then
+      call tecjointpdf(pdff,xx,yy,nxx,nyy,caseid)
+   endif
 
    call marginalpdf(pdff,margxx,margyy,nxx,nyy,dxx,dyy)
    call tecfunc('margx'//caseid,margxx,xx,nxx,'x','BAYES')

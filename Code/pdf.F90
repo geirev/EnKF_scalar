@@ -9,14 +9,15 @@ program iterative_smoothers
    use m_cyyreg
    use m_iniens
    use m_es
+   use m_ese
    use m_ies
    use m_iese
    use m_sies
    use m_esmda
    use m_enstein
-   use m_tecpdf
    use m_tecmargpdf
    use m_printcostf
+   use m_jointpdf
    use m_tecjointpdf
    use m_tecfunc
    use m_teccostens
@@ -25,9 +26,9 @@ program iterative_smoothers
    implicit none
    integer nrsamp,esamp
 
-   integer, parameter :: nrmethods=6
-   character(len=7) :: method(0:nrmethods) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','EnSTEIN','IESE   ']
-   logical          :: lactive(0:nrmethods)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   /)
+   integer, parameter :: nrmethods=7
+   character(len=7) :: method(0:nrmethods) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','EnSTEIN','IESE   ','ESE    ']
+   logical          :: lactive(0:nrmethods)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   /)
    character(len=1) :: variable(1:2)=['x','q']
 
    real, allocatable :: xsampini(:), xsamp(:)
@@ -115,8 +116,22 @@ program iterative_smoothers
          stop
       endif
       read(10,*)lenstein      ; print '(a,tr10,l1)',  'Run EnSTEIN                :',lenstein; lactive(5)=lenstein
-      read(10,*)maxensteinit  ; print '(a,i5)',       'maxiesit                   :',maxensteinit
-      read(10,*)gamma_enstein ; print '(a,f10.3)',    'gamma_sies                 :',gamma_enstein
+      read(10,*)maxensteinit  ; print '(a,i5)',       'maxensteinit               :',maxensteinit
+      read(10,*)gamma_enstein ; print '(a,f10.3)',    'gamma_enstein              :',gamma_enstein
+      read(10,'(a)')ca
+      if (ca /= '#9') then
+         print *,'#9: error in infile.in'
+         stop
+      endif
+      read(10,*)lese         ; print '(a,tr10,l1)',  'Run ESe                    :',lese; lactive(7)=lese
+      read(10,'(a)')ca
+      if (ca /= '#A') then
+         print *,'#A: error in infile.in'
+         stop
+      endif
+      read(10,*)liese         ; print '(a,tr10,l1)',  'Run IESe                   :',liese; lactive(6)=liese
+      read(10,*)maxieseit     ; print '(a,i5)',       'maxieseit                  :',maxieseit
+      read(10,*)gamma_iese    ; print '(a,f10.3)',    'gamma_iese                 :',gamma_iese
    close(10)
 
    if (ladjoints) then
@@ -132,7 +147,7 @@ program iterative_smoothers
    nrsamp=10**esamp
    nrsamp=4*nrsamp
 
-   allocate(qsampini(nrsamp), xsampini(nrsamp) , ysampini(nrsamp), dpert(nrsamp))
+   allocate(qsampini(nrsamp), xsampini(nrsamp) , ysampini(nrsamp), dpert(nrsamp) )
    allocate(samples(nrsamp,2,0:nrmethods)); samples=0.0
 
 
@@ -156,16 +171,24 @@ program iterative_smoothers
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Ensemble initialization
-   call iniens(samples(1:nrsamp,1:2,0),xsampini,qsampini,ysampini,dpert,nrsamp,esamp)
+   call iniens(samples(1:nrsamp,1:2,0),xsampini,qsampini,ysampini,dpert,nrsamp)
 
 ! ES 
-   call es(samples(1:nrsamp,1:2,1),xsampini,qsampini,dpert,nrsamp,esamp)
+   call es(samples(1:nrsamp,1:2,1),xsampini,qsampini,dpert,nrsamp)
+
+! ESe 
+   if (lese) then
+      call ese(samples(1:nrsamp,1:2,7),xsampini,qsampini,dpert,nrsamp)
+   endif
 
 ! IES
    if (lies) then
-      call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,esamp,dpert)
-      lactive(6)=liese
-!      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,esamp,d)
+      call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,dpert)
+   endif
+
+! IESe
+   if (liese) then
+      call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,d)
    endif
 
 ! Subspace IES
@@ -215,7 +238,8 @@ program iterative_smoothers
          else
             call getcaseid(caseid,method(j),-1.0,-1,esamp,sigw,0)
          endif
-         call tecpdf(x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
+         call jointpdf(pdf,x,y,nx,ny,xsamp,ysamp,nrsamp,xa,ya,dx,dy,caseid)
+         call tecjointpdf(pdf,x,y,nx,ny,caseid)
          call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
          call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
          if (sigw > 0.0) call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)

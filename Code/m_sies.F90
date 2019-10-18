@@ -9,7 +9,6 @@ use m_func
 use m_normal
 use m_tecmargpdf
 use m_tecsampini
-use m_tecpdf
 implicit none
 logical, save :: lsies         ! Run SIES or not
 integer, save :: maxsiesit     ! Maximum number of iterations

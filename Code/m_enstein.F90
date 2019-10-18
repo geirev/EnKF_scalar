@@ -10,7 +10,6 @@ use m_func
 use m_normal
 use m_tecmargpdf
 use m_tecsampini
-use m_tecpdf
 implicit none
 logical, save :: lenstein      ! Run SIES or not
 integer, save :: maxensteinit  ! Maximum number of iterations

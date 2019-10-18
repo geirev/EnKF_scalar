@@ -7,7 +7,6 @@ use m_func
 use m_getalpha
 use m_normal
 use m_tecmargpdf
-use m_tecpdf
 use mod_xyqgrid
 implicit none
 logical, save :: lmda           ! Run esmda or not

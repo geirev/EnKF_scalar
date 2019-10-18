@@ -4,6 +4,7 @@ MODULES = \
 	m_cov.F90\
 	m_cyyreg.F90\
 	m_enstein.F90\
+	m_ese.F90\
 	m_es.F90\
 	m_esmda.F90\
 	m_func.F90\
@@ -15,6 +16,7 @@ MODULES = \
 	m_iniens.F90\
 	m_inipdfs.F90\
 	m_integrals.F90\
+	m_jointpdf.F90\
 	m_marginalpdf.F90\
 	m_moments.F90\
 	m_normal.F90\
@@ -31,7 +33,6 @@ MODULES = \
 	m_tecfunc.F90\
 	m_tecjointpdf.F90\
 	m_tecmargpdf.F90\
-	m_tecpdf.F90\
 	m_tecsampini.F90\
 	m_tecstat.F90\
 	m_tecstatIES.F90

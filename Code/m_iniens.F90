@@ -3,14 +3,13 @@ use mod_inistat
 use mod_xyqgrid
 use m_getcaseid
 use m_normal
-use m_tecpdf
 use m_func
 use m_tecmargpdf
 use m_moments
 implicit none
 contains
-subroutine iniens(samples,xf,qf,yf,dpert,nrsamp,esamp)
-   integer, intent(in)   :: nrsamp,esamp
+subroutine iniens(samples,xf,qf,yf,dpert,nrsamp)
+   integer, intent(in)   :: nrsamp
    real,    intent(out)  :: xf(nrsamp),qf(nrsamp),yf(nrsamp),dpert(nrsamp)
    real,    intent(out)  :: samples(nrsamp,2)
 

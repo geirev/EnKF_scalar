@@ -9,18 +9,16 @@ use m_iescostf
 use m_normal
 use m_tecmargpdf
 use m_tecsampini
-use m_tecpdf
 implicit none
-logical, save :: liese=.false.         ! Run IESE or not
-integer, save :: maxieseit=400        ! maximumn number of iterations
-real,    save :: gamma_iese=0.4       ! step length used in IESE
+logical, save :: liese                ! Run IESE or not
+integer, save :: maxieseit            ! maximumn number of iterations
+real,    save :: gamma_iese           ! step length used in IESE
 real,    save :: iese_eps=0.0000001
 
 contains 
-   subroutine iese(samples,xf,qf,nrsamp,esamp,datum)
+   subroutine iese(samples,xf,qf,nrsamp,datum)
    implicit none
    integer, intent(in)  :: nrsamp            ! Number of samples
-   integer, intent(in)  :: esamp             ! Number of samples nrsamp=10^esamp for plotting
    real,    intent(out) :: samples(nrsamp,2) ! Returns posterior samples
    real,    intent(in)  :: xf(nrsamp)        ! Prior samples of x
    real,    intent(in)  :: qf(nrsamp)        ! Prior samples of q
@@ -82,12 +80,14 @@ contains
          print *,'converged realizations=', sumconv,nrsamp,real(100*sumconv)/real(nrsamp)
       endif
       call cov(Pxx,Pyy,Pqq,Pyx,Pqy,Pqx,xsamp,ysamp,qsamp,nrsamp)
-      if (lcyyreg) Pyy=cyyreg(Pxx,Pqq,Pyx,Pqy,Pqx)
       Pzz(1,1)=Pxx;  Pzz(2,2)=Pqq;  Pzz(1,2)=Pqx;   Pzz(2,1)=Pqx
       PIzz(1,1)=Pqq; PIzz(2,2)=Pxx; PIzz(1,2)=-Pqx; PIzz(2,1)=-Pqx
       if (Pqq > 0.0) PIzz=PIzz/(Pxx*Pqq-Pqx*Pqx)
+
       Pzy(1,1)=Pyx; Pzy(2,1)=Pqy
       Pyz(1,1)=Pyx; Pyz(1,2)=Pqy
+
+!      if (lcyyreg) Pyy=cyyreg(Pxx,Pqq,Pyx,Pqy,Pqx)
 
       G=matmul(Pyz,PIzz) - transpose(Ie)
       GT(1)=G(1,1); GT(2)=G(1,2)

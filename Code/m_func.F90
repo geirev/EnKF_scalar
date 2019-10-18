@@ -1,4 +1,5 @@
 module m_func
+   use mod_inistat
    implicit none
    real, parameter :: pi=3.141592654
    real, save ::  beta    ! model parameter
@@ -11,9 +12,10 @@ real function func(x,q)
    real, intent(in) :: q
    select case (funcmode)
    case(0)
-      func=x+beta*x**3 + q  !+ q**3
+      func=x+beta*x**3 + q 
    case(1)
-      func=1.0+beta*(x**3-x) + q  ! use with beta=2.62
+      func=x + beta*x**3 + q + beta*q**3
+!      func=func-0.5*(func-d-q)
    case(2)
       func=1.0+sin(x*pi) + q
    case default

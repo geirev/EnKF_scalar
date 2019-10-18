@@ -9,7 +9,6 @@ use m_iescostf
 use m_normal
 use m_tecmargpdf
 use m_tecsampini
-use m_tecpdf
 implicit none
 logical, save :: lies                ! Run IES or not
 logical, save :: liesadjoint=.false. ! Run IES with adjoint sensitivites
@@ -19,10 +18,9 @@ integer, save :: IESv                ! step length used in IES
 real, save :: ies_eps=0.0000001
 
 contains 
-   subroutine ies(samples,xf,qf,nrsamp,esamp,dpert)
+   subroutine ies(samples,xf,qf,nrsamp,dpert)
    implicit none
    integer, intent(in)  :: nrsamp            ! Number of samples
-   integer, intent(in)  :: esamp             ! Number of samples nrsamp=10^esamp for plotting
    real,    intent(out) :: samples(nrsamp,2) ! Returns posterior samples
    real,    intent(in)  :: xf(nrsamp)        ! Prior samples of x
    real,    intent(in)  :: qf(nrsamp)        ! Prior samples of q
