@@ -9,9 +9,7 @@ program iterative_smoothers
    use m_cyyreg
    use m_iniens
    use m_es
-   use m_ese
    use m_ies
-   use m_iese
    use m_sies
    use m_esmda
    use m_enstein
@@ -22,13 +20,13 @@ program iterative_smoothers
    use m_tecfunc
    use m_teccostens
    use m_normal
-   use m_integrals
+!   use m_integrals
    implicit none
    integer nrsamp,esamp
 
-   integer, parameter :: nrmethods=7
-   character(len=7) :: method(0:nrmethods) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','EnSTEIN','IESE   ','ESE    ']
-   logical          :: lactive(0:nrmethods)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   ,.true.   /)
+   integer, parameter :: nrmethods=5
+   character(len=7) :: method(0:nrmethods) =['INI    ','ES     ','IES    ','SIES   ','ESMDA  ','STEIN  ']
+   logical          :: lactive(0:nrmethods)=(/.true.  ,.true.   ,.true.   ,.true.   ,.true.   ,.true.  /)
    character(len=1) :: variable(1:2)=['x','q']
 
    real, allocatable :: xsampini(:), xsamp(:)
@@ -70,6 +68,7 @@ program iterative_smoothers
       read(10,*)d             ; print '(a,f10.3)',    'measurement of y           :',d
       read(10,*)sigo          ; print '(a,f10.3)',    'measurement std dev        :',sigo ; cdd=sigo**2
       read(10,*)sigw          ; print '(a,f10.3)',    'model std dev              :',sigw
+      if (sigw < sigq) sigw=sigq ; ; print '(a,f10.3)',    'model std dev reset to     :',sigw
       read(10,'(a)')ca
       if (ca /= '#3') then
          print *,'#3: error in infile.in'
@@ -117,35 +116,19 @@ program iterative_smoothers
       endif
       read(10,*)lenstein      ; print '(a,tr10,l1)',  'Run EnSTEIN                :',lenstein; lactive(5)=lenstein
       read(10,*)maxensteinit  ; print '(a,i5)',       'maxensteinit               :',maxensteinit
-      read(10,*)gamma_enstein ; print '(a,f10.3)',    'gamma_enstein              :',gamma_enstein
-      read(10,'(a)')ca
-      if (ca /= '#9') then
-         print *,'#9: error in infile.in'
-         stop
-      endif
-      read(10,*)lese         ; print '(a,tr10,l1)',  'Run ESe                    :',lese; lactive(7)=lese
-      read(10,'(a)')ca
-      if (ca /= '#A') then
-         print *,'#A: error in infile.in'
-         stop
-      endif
-      read(10,*)liese         ; print '(a,tr10,l1)',  'Run IESe                   :',liese; lactive(6)=liese
-      read(10,*)maxieseit     ; print '(a,i5)',       'maxieseit                  :',maxieseit
-      read(10,*)gamma_iese    ; print '(a,f10.3)',    'gamma_iese                 :',gamma_iese
+      read(10,*)istein        ; print '(a,i6)',       'istein                     :',istein
    close(10)
 
    if (ladjoints) then
-      if (sigw > 0.0 ) stop 'Must have sigw=0.0 with ladjoints=true'
       if (lies .and. IESv /= 1 )  stop 'Must have IESv=1 with ladjoints=true'
       lesadjoint=.true.
       lesmdaadjoint=.true.
       liesadjoint=.true.
+      lsteinadjoint=.true.
       if (lsies) lsies=.false.
-      if (lenstein) lenstein=.false.
    endif
 
    nrsamp=10**esamp
-   nrsamp=4*nrsamp
 
    allocate(qsampini(nrsamp), xsampini(nrsamp) , ysampini(nrsamp), dpert(nrsamp) )
    allocate(samples(nrsamp,2,0:nrmethods)); samples=0.0
@@ -176,25 +159,14 @@ program iterative_smoothers
 ! ES 
    call es(samples(1:nrsamp,1:2,1),xsampini,qsampini,dpert,nrsamp)
 
-! ESe identical to ES
-   if (lese) then
-      call ese(samples(1:nrsamp,1:2,7),xsampini,qsampini,dpert,nrsamp)
-   endif
-
 ! IES
    if (lies) then
-      call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,nrsamp,dpert)
-   endif
-
-! IESe  erroneos trial
-   if (liese) then
-     stop 'lies should not be true '
-     ! call iese(samples(1:nrsamp,1:2,6),xsampini,qsampini,nrsamp,d)
+      call ies(samples(1:nrsamp,1:2,2),xsampini,qsampini,dpert,nrsamp)
    endif
 
 ! Subspace IES
    if (lsies) then
-      call sies(samples(1:nrsamp,1:2,3),xsampini,qsampini,nrsamp,esamp,dpert)
+      call sies(samples(1:nrsamp,1:2,3),xsampini,qsampini,dpert,nrsamp,esamp)
    endif
 
 ! ESMDA
@@ -226,13 +198,13 @@ program iterative_smoothers
          if (ladjoints) then
             if (trim(method(j)) == 'ES')    method(j)='ESAD   '
             if (trim(method(j)) == 'IES')   method(j)='IESAD  '
-            if (trim(method(j)) == 'ESMDA') method(j)='ESMDAD '
+            if (trim(method(j)) == 'ESMDA') method(j)='ESMDAAD'
+            if (trim(method(j)) == 'STEIN') method(j)='STEINAD'
          endif
          do i=1,nrsamp
             xsamp(i)=samples(i,1,j)
             qsamp(i)=samples(i,2,j)
             ysamp(i)=func(xsamp(i),qsamp(i))
-            if (sigw < sigq) ysamp(i)=ysamp(i)+sigq*normal()
          enddo
          if (trim(method(j)) == 'ESMDA') then
             call getcaseid(caseid,method(j),alphageo,nmda,esamp,sigw,0)
@@ -243,7 +215,7 @@ program iterative_smoothers
          call tecjointpdf(pdf,x,y,nx,ny,caseid)
          call tecmargpdf('x',xsamp,nrsamp,caseid,xa,xb,nx)
          call tecmargpdf('y',ysamp,nrsamp,caseid,ya,yb,ny)
-         if (sigw > 0.0) call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
+         call tecmargpdf('q',qsamp,nrsamp,caseid,qa,qb,nx)
       endif
    enddo
    deallocate(xsamp, qsamp, ysamp)

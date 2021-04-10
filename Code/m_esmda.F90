@@ -28,9 +28,9 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    real, allocatable :: alpha(:)
 
    integer n,i
-   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,alphasum,dgx
+   real Cxx,Cyy,Cqq,Cxy,Cqy,Cxq,alphasum
    real pert
-!   character(len=40) caseid
+   real dg(2) ! model sensitivity wrt x and q
 
    allocate(xsamp(nrsamp))
    allocate(qsamp(nrsamp))
@@ -48,22 +48,26 @@ subroutine esmda(samples,xsampini,qsampini,nrsamp,esamp)
    alphasum=0.0
    do n=1,nmda
       alpha(n)=getalpha(n,nmda,alphageo)
-      print '(a,i3,a,i3,a,f13.5,a,i3)','step:',n,' alpha(',n,')=',alpha(n),' nmda=',nmda
+      write(*,'(a,i3,a,i3,a,f13.5,a,i3)',advance='no')'step:',n,' alpha(',n,')=',alpha(n),' nmda=',nmda
       alphasum=alphasum+1.0/alpha(n)
 
-      call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
+      call cov(Cxx,Cyy,Cqq,Cxy,Cqy,Cxq,xsamp,ysamp,qsamp,nrsamp)
+      write(*,'(a,f8.4)',advance='no')'  cyy0=',Cyy
 
-      if (lcyyreg) Cyy=cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
-
-      if (lesmdaadjoint) then
-         dgx=dfunc(xsamp(i),qsamp(i))
-         Cyx=dgx*Cxx
-         Cyy=dgx*Cxx*dgx
-      endif
+      if (lcyyreg) Cyy=cyyreg(Cxx,Cqq,Cxy,Cqy,Cxq)
+!      if (lcyyreg) write(*,'(a,f8.4)',advance='no')'  cyy1=',Cyy
 
       do i=1,nrsamp
+         if (lesmdaadjoint) then
+            dg=dfunc(xsamp(i),qsamp(i))
+            Cxy=Cxx * dg(1) + Cxq * dg(2)
+            Cqy=Cxq * dg(1) + Cqq * dg(2) 
+            Cyy=dg(1)*Cxy + dg(2)*Cqy
+         endif
+         if (i<5) write(*,'(a,i3,3f8.4,a)',advance='no')'  cyy=(',i, Cyy, dg(1), dg(2),')'
+         if (i==5) write(*,'(a)')'-'
          pert=sqrt(alpha(n))*sigo*normal()
-         xsamp(i)=xsamp(i) + (Cyx/(Cyy+alpha(n)*Cdd))*(d+pert-ysamp(i))
+         xsamp(i)=xsamp(i) + (Cxy/(Cyy+alpha(n)*Cdd))*(d+pert-ysamp(i))
          qsamp(i)=qsamp(i) + (Cqy/(Cyy+alpha(n)*Cdd))*(d+pert-ysamp(i))
          ysamp(i)=func(xsamp(i),qsamp(i))
       enddo

@@ -17,7 +17,7 @@ integer, parameter :: nrobs=1
 integer, parameter :: ndim=2
 real, save :: sies_eps=0.0000001
 contains 
-   subroutine sies(samples,xf,qf,nrsamp,esamp,dpert)
+   subroutine sies(samples,xf,qf,dpert,nrsamp,esamp)
    integer, intent(in)  :: nrsamp            ! Number of samples
    integer, intent(in)  :: esamp             ! Number of samples nrsamp=10^esamp for plotting
    real,    intent(in)  :: xf(nrsamp)        ! Prior samples of x

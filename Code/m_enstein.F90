@@ -14,7 +14,9 @@ implicit none
 logical, save :: lenstein      ! Run SIES or not
 integer, save :: maxensteinit  ! Maximum number of iterations
 real,    save :: gamma_enstein ! steplength
+logical, save :: lsteinadjoint=.false. ! Run EnStein with adjoint sensitivites
 integer, parameter :: ndim=2
+integer, save :: istein
 
 contains 
    subroutine enstein(samples,xf,qf,nrsamp,esamp)
@@ -31,8 +33,8 @@ contains
    integer n,i,j,k,sumconv
    character(len=40) caseid
 
-   real cxx,cyy,cqq,cyx,cqy,cqx
-   real pxx,pyy,pqq,pyx,pqy,pqx
+   real cxx,cyy,cqq,cxy,cqy,cqx
+   real Pxx,Pyy,Pqq,Pxy,Pqy,Pqx
    real, allocatable :: sf(:),si(:,:),grad(:,:),newgrad(:,:)
    real :: xlength=1.0
    real Czz(2,2),Pzz(2,2),PIzz(2,2),CIzz(2,2),Pzy(2,1),Pyz(1,2)
@@ -60,13 +62,7 @@ contains
       sf(1)=x0   
       sf(2)=0.0
    enddo
-   call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
-   if (Cqq==0.0) then
-      write(*,'(a)',advance='yes')'Only coded for the case with model errors'
-      deallocate(xsamp,ysamp,qsamp,iconv)
-      return
-   endif
-
+   call cov(Cxx,Cyy,Cqq,Cxy,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
 
    Czz(1,1)=Cxx; Czz(2,2)=Cqq; Czz(1,2)=Cqx; Czz(2,1)=Cqx
    CIzz(1,1)=Cqq; CIzz(2,2)=Cxx; CIzz(1,2)=-Cqx; CIzz(2,1)=-Cqx
@@ -78,12 +74,12 @@ contains
       if (mod(i,10) == 0) then
          write(*,'(a,i4,a)')'i=',i,'...'
       endif
-      call cov(Pxx,Pyy,Pqq,Pyx,Pqy,Pqx,xsamp,ysamp,qsamp,nrsamp)
+      call cov(Pxx,Pyy,Pqq,Pxy,Pqy,Pqx,xsamp,ysamp,qsamp,nrsamp)
       Pzz(1,1)=Pxx; Pzz(2,2)=Pqq; Pzz(1,2)=Pqx; Pzz(2,1)=Pqx
       PIzz(1,1)=Pqq; PIzz(2,2)=Pxx; PIzz(1,2)=-Pqx; PIzz(2,1)=-Pqx
       PIzz=PIzz/(Pxx*Pqq-Pqx*Pqx)
-      Pzy(1,1)=Pyx; Pzy(2,1)=Pqy
-      Pyz(1,1)=Pyx; Pyz(1,2)=Pqy
+      Pzy(1,1)=Pxy; Pzy(2,1)=Pqy
+      Pyz(1,1)=Pxy; Pyz(1,2)=Pqy
 
       do n=1,nrsamp
          si(1,n)=xsamp(n)
@@ -95,17 +91,19 @@ contains
          call dgemm('N','N',ndim,1,ndim,1.0,CIzz,ndim,si(:,n)-sf(:),ndim,0.0,grad(:,n),ndim)
 ! C_d^{-1} (y_j - d) with unperturbed data
          fac=(ysamp(n)-d)/sigo**2   
-! Data term in EnStein  G=Pxx^{-1} Pxy
-         call dgemm('N','N',ndim,1,ndim,fac,PIzz,ndim,Pzy,ndim,1.0,grad(:,n),ndim)
+         if (lsteinadjoint) then
 ! Data term in Stein with analytic G
-!            grad(1,n)=grad(1,n)+dfunc(si(1,n),si(2,n))*fac
-!            grad(2,n)=grad(2,n)+fac
+            grad(:,n)=grad(:,n)+dfunc(si(1,n),si(2,n))*fac
+         else
+! Data term in EnStein  G=Pxx^{-1} Pxy
+            call dgemm('N','N',ndim,1,ndim,fac,PIzz,ndim,Pzy,ndim,1.0,grad(:,n),ndim)
+         endif
       enddo
 
 
       do n=1,nrsamp
          newgrad(:,n)=0.0
-         do k=1,100
+         do k=1,istein
             call random_number(tmp)
             j=nint(tmp*real(nrsamp-1)+1.0)
             if (k==1) j=n
@@ -113,7 +111,7 @@ contains
                     steinkern(si(:,n),si(:,j),xlength,2)*  &
                     (grad(:,j) + (2.0*(si(:,j) - si(:,n))/xlength))
          enddo
-         newgrad(:,n)=newgrad(:,n)/real(100.0)
+         newgrad(:,n)=newgrad(:,n)/real(istein)
       enddo
 
       do n=1,nrsamp

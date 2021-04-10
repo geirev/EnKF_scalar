@@ -29,8 +29,9 @@ subroutine getcaseid(caseid,esmethod,alphageo,nmda,esamp,sigw,it)
    endif
 
    caseid(:)=' '
-   caseid=trim(esmethod)//'_'//trim(csamp)//'_'//csigw
-   if (nmda > 0) caseid=trim(caseid)//'_'//cnmda
+!   caseid=trim(esmethod)//'_'//trim(csamp)//'_'//csigw
+   caseid=trim(esmethod)
+!   if (nmda > 0) caseid=trim(caseid)//'_'//cnmda
    if (it > 0) caseid=trim(caseid)//'_'//cit 
 
 end subroutine

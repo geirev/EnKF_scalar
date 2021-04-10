@@ -2,7 +2,7 @@ module mod_xyqgrid
 use mod_inistat
 use m_func
 implicit none
-integer, parameter :: nx=50
+integer, parameter :: nx=100
 integer, parameter :: nq=50
 integer, parameter :: ny=50
 

@@ -18,14 +18,15 @@ compute_likelihood	m_inipdfs.F90	/^subroutine compute_likelihood(/;"	s	module:m_
 compute_prior	m_inipdfs.F90	/^subroutine compute_prior(/;"	s	module:m_inipdfs
 compute_uncond_jointpdf	m_inipdfs.F90	/^subroutine compute_uncond_jointpdf(/;"	s	module:m_inipdfs
 cost	mod_xyqgrid.F90	/^real, save :: datum(ny), priorx(nx), priorq(nq), pdf(nx,ny), cost(/;"	v	module:mod_xyqgrid
+costf	m_iescostf.F90	/^real function costf(/;"	f	module:m_iescostf
 cov	m_cov.F90	/^subroutine cov(/;"	s	module:m_cov
 cyyreg	m_cyyreg.F90	/^real function cyyreg(/;"	f	module:m_cyyreg
 d	mod_inistat.F90	/^   real, save :: d /;"	v	module:mod_inistat
 datum	mod_xyqgrid.F90	/^real, save :: datum(/;"	v	module:mod_xyqgrid
-ddfunc	m_func.F90	/^real function ddfunc(/;"	f	module:m_func
-ddjxfunc	m_iescostf.F90	/^real function ddjxfunc(/;"	f	module:m_iescostf
-dfunc	m_func.F90	/^real function dfunc(/;"	f	module:m_func
-djxfunc	m_iescostf.F90	/^real function djxfunc(/;"	f	module:m_iescostf
+dcost	m_iescostf.F90	/^function dcost(/;"	f	module:m_iescostf
+ddfunc	m_func.F90	/^function ddfunc(/;"	f	module:m_func
+ddjfunc	m_iescostf.F90	/^function ddjfunc(/;"	f	module:m_iescostf
+dfunc	m_func.F90	/^function dfunc(/;"	f	module:m_func
 dq	mod_xyqgrid.F90	/^real, save :: dx,dy,dq$/;"	v	module:mod_xyqgrid
 dqq	mod_xyqgrid.F90	/^real, save :: dqq$/;"	v	module:mod_xyqgrid
 dx	mod_xyqgrid.F90	/^real, save :: dx,/;"	v	module:mod_xyqgrid
@@ -34,53 +35,44 @@ dy	mod_xyqgrid.F90	/^real, save :: dx,dy,/;"	v	module:mod_xyqgrid
 dyy	mod_xyqgrid.F90	/^real, save :: dyy$/;"	v	module:mod_xyqgrid
 enstein	m_enstein.F90	/^   subroutine enstein(/;"	s	module:m_enstein
 es	m_es.F90	/^subroutine es(/;"	s	module:m_es
-esamp	pdf.F90	/^   integer nrsamp,esamp$/;"	v	program:iterative_smoothers
-ese	m_ese.F90	/^subroutine ese(/;"	s	module:m_ese
+esamp	main.F90	/^   integer nrsamp,esamp$/;"	v	program:iterative_smoothers
 esmda	m_esmda.F90	/^subroutine esmda(/;"	s	module:m_esmda
 func	m_func.F90	/^real funct/;"	f	module:m_func
 funcmode	m_func.F90	/^   integer, save ::  funcmode /;"	v	module:m_func
 gamma_enstein	m_enstein.F90	/^real,    save :: gamma_enstein /;"	v	module:m_enstein
 gamma_ies	m_ies.F90	/^real,    save :: gamma_ies /;"	v	module:m_ies
-gamma_iese	m_iese.F90	/^real,    save :: gamma_iese /;"	v	module:m_iese
 gamma_sies	m_sies.F90	/^real,    save :: gamma_sies /;"	v	module:m_sies
 getalpha	m_getalpha.F90	/^real function getalpha(/;"	f	module:m_getalpha
 getcaseid	m_getcaseid.F90	/^subroutine getcaseid(/;"	s	module:m_getcaseid
 ies	m_ies.F90	/^   subroutine ies(/;"	s	module:m_ies
 ies_eps	m_ies.F90	/^real, save :: ies_eps=/;"	v	module:m_ies
-iese	m_iese.F90	/^   subroutine iese(/;"	s	module:m_iese
-iese_eps	m_iese.F90	/^real,    save :: iese_eps=/;"	v	module:m_iese
 iniens	m_iniens.F90	/^subroutine iniens(/;"	s	module:m_iniens
 integrals	m_integrals.F90	/^subroutine integrals(/;"	s	module:m_integrals
-iterative_smoothers	pdf.F90	/^program iterative_smoothers$/;"	p
+iterative_smoothers	main.F90	/^program iterative_smoothers$/;"	p
 jointpdf	m_jointpdf.F90	/^   subroutine jointpdf(/;"	s	module:m_jointpdf
-jxfunc	m_iescostf.F90	/^real function jxfunc(/;"	f	module:m_iescostf
 lactivepdf	m_jointpdf.F90	/^logical, save :: lactivepdf$/;"	v	module:m_jointpdf
 lcyyreg	m_cyyreg.F90	/^logical, save :: lcyyreg$/;"	v	module:m_cyyreg
 lenstein	m_enstein.F90	/^logical, save :: lenstein /;"	v	module:m_enstein
 les	m_es.F90	/^logical, save :: les=/;"	v	module:m_es
 lesadjoint	m_es.F90	/^logical, save :: lesadjoint=/;"	v	module:m_es
-lese	m_ese.F90	/^logical, save :: lese=/;"	v	module:m_ese
-leseadjoint	m_ese.F90	/^logical, save :: leseadjoint=/;"	v	module:m_ese
 lesmdaadjoint	m_esmda.F90	/^logical, save :: lesmdaadjoint=/;"	v	module:m_esmda
 lies	m_ies.F90	/^logical, save :: lies /;"	v	module:m_ies
 liesadjoint	m_ies.F90	/^logical, save :: liesadjoint=/;"	v	module:m_ies
-liese	m_iese.F90	/^logical, save :: liese /;"	v	module:m_iese
 lmda	m_esmda.F90	/^logical, save :: lmda /;"	v	module:m_esmda
 lsies	m_sies.F90	/^logical, save :: lsies /;"	v	module:m_sies
+lsteinadjoint	m_enstein.F90	/^logical, save :: lsteinadjoint=/;"	v	module:m_enstein
 m_aaprojection	m_aaprojection.F90	/^module m_aaprojection$/;"	m
 m_avevar	m_avevar.F90	/^module m_avevar$/;"	m
 m_cov	m_cov.F90	/^module m_cov$/;"	m
 m_cyyreg	m_cyyreg.F90	/^module m_cyyreg$/;"	m
 m_enstein	m_enstein.F90	/^module m_enstein$/;"	m
 m_es	m_es.F90	/^module m_es$/;"	m
-m_ese	m_ese.F90	/^module m_ese$/;"	m
 m_esmda	m_esmda.F90	/^module m_esmda$/;"	m
 m_func	m_func.F90	/^module m_func$/;"	m
 m_getalpha	m_getalpha.F90	/^module m_getalpha$/;"	m
 m_getcaseid	m_getcaseid.F90	/^module m_getcaseid$/;"	m
 m_ies	m_ies.F90	/^module m_ies$/;"	m
 m_iescostf	m_iescostf.F90	/^module m_iescostf$/;"	m
-m_iese	m_iese.F90	/^module m_iese$/;"	m
 m_iniens	m_iniens.F90	/^module m_iniens$/;"	m
 m_inipdfs	m_inipdfs.F90	/^module m_inipdfs$/;"	m
 m_integrals	m_integrals.F90	/^module m_integrals /;"	m
@@ -107,10 +99,9 @@ margq	mod_xyqgrid.F90	/^real, save :: margx(nx), margy(ny), margq(/;"	v	module:m
 margx	mod_xyqgrid.F90	/^real, save :: margx(/;"	v	module:mod_xyqgrid
 margy	mod_xyqgrid.F90	/^real, save :: margx(nx), margy(/;"	v	module:mod_xyqgrid
 maxensteinit	m_enstein.F90	/^integer, save :: maxensteinit /;"	v	module:m_enstein
-maxieseit	m_iese.F90	/^integer, save :: maxieseit /;"	v	module:m_iese
 maxiesit	m_ies.F90	/^integer, save :: maxiesit /;"	v	module:m_ies
 maxsiesit	m_sies.F90	/^integer, save :: maxsiesit /;"	v	module:m_sies
-method	pdf.F90	/^   character(len=7) :: method(/;"	v	program:iterative_smoothers
+method	main.F90	/^   character(len=7) :: method(/;"	v	program:iterative_smoothers
 mod_inistat	mod_inistat.F90	/^module mod_inistat$/;"	m
 mod_xyqgrid	mod_xyqgrid.F90	/^module mod_xyqgrid$/;"	m
 moments	m_moments.F90	/^subroutine moments(/;"	s	module:m_moments
@@ -121,9 +112,9 @@ normal	m_normal.F90	/^real function normal(/;"	f	module:m_normal
 nq	mod_xyqgrid.F90	/^integer, parameter :: nq=/;"	v	module:mod_xyqgrid
 nqq	mod_xyqgrid.F90	/^integer, parameter :: nqq=/;"	v	module:mod_xyqgrid
 nrits	m_printcostf.F90	/^integer, parameter :: nrits=/;"	v	module:m_printcostf
-nrmethods	pdf.F90	/^   integer, parameter :: nrmethods=/;"	v	program:iterative_smoothers
+nrmethods	main.F90	/^   integer, parameter :: nrmethods=/;"	v	program:iterative_smoothers
 nrobs	m_sies.F90	/^integer, parameter :: nrobs=/;"	v	module:m_sies
-nrsamp	pdf.F90	/^   integer nrsamp,/;"	v	program:iterative_smoothers
+nrsamp	main.F90	/^   integer nrsamp,/;"	v	program:iterative_smoothers
 nx	mod_xyqgrid.F90	/^integer, parameter :: nx=/;"	v	module:mod_xyqgrid
 nxx	mod_xyqgrid.F90	/^integer, parameter :: nxx=/;"	v	module:mod_xyqgrid
 ny	mod_xyqgrid.F90	/^integer, parameter :: ny=/;"	v	module:mod_xyqgrid

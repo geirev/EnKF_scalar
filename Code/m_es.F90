@@ -8,8 +8,8 @@ use m_func
 use m_normal
 use m_tecmargpdf
 implicit none
-logical, save :: les=.true.               ! Run IES or not
-logical, save :: lesadjoint=.false. ! Run IES with adjoint sensitivites
+logical, save :: les=.true.               ! Run ES or not
+logical, save :: lesadjoint=.false.       ! Run ES with adjoint sensitivites
 contains
 subroutine es(samples,xf,qf,dpert,nrsamp)
    integer, intent(in)  :: nrsamp
@@ -23,9 +23,9 @@ subroutine es(samples,xf,qf,dpert,nrsamp)
    real, allocatable :: ysamp(:)
 
    integer i
-   real Cxx,Cyy,Cqq,Cyx,Cqy,Cqx
-   real dgx
-!   character(len=40) caseid
+   real Cxx,Cyy,Cqq,Cxy,Cqy,Cqx
+!   real Czz(2,2)
+   real dg(2) ! model sensitivity wrt x and q
 
    allocate(xsamp(nrsamp))
    allocate(qsamp(nrsamp))
@@ -39,19 +39,23 @@ subroutine es(samples,xf,qf,dpert,nrsamp)
       ysamp(i)=func(xsamp(i),qsamp(i))
    enddo
 
-   call cov(Cxx,Cyy,Cqq,Cyx,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
+   call cov(Cxx,Cyy,Cqq,Cxy,Cqy,Cqx,xsamp,ysamp,qsamp,nrsamp)
 
-   if (lcyyreg) cyy=cyyreg(Cxx,Cqq,Cyx,Cqy,Cqx)
+   if (lcyyreg) cyy=cyyreg(Cxx,Cqq,Cxy,Cqy,Cqx)
 
    do i=1,nrsamp
       if (lesadjoint) then
-         dgx=dfunc(xsamp(i),qsamp(i))
-         cyx=dgx*siga**2
-         cyy=dgx*siga**2*dgx
+         dg=dfunc(xsamp(i),qsamp(i))
+         ! Czz * G^T
+         Cxy=siga**2 * dg(1) +     0.0 * dg(2)
+         Cqy=    0.0 * dg(1) + sigw**2 * dg(2) 
+
+         ! G * Czz * G^T
+         Cyy=dg(1)*Cxy + dg(2)*Cqy
       endif
 
-      xsamp(i)=xsamp(i) + (cyx/(cyy+cdd))*(dpert(i)-ysamp(i))
-      qsamp(i)=qsamp(i) + (cqy/(cyy+cdd))*(dpert(i)-ysamp(i))
+      xsamp(i)=xsamp(i) + (Cxy/(Cyy+cdd))*(dpert(i)-ysamp(i))
+      qsamp(i)=qsamp(i) + (Cqy/(Cyy+cdd))*(dpert(i)-ysamp(i))
       ysamp(i)=func(xsamp(i),qsamp(i))
 
 !      if (updatemode==0) then

@@ -4,7 +4,7 @@ module mod_inistat
    real, save :: siga    ! std dev in prior
    real, save :: sigw    ! std dev in model
    real, save :: sigo    ! std dev in observation
-   real, parameter :: sigq= 0.05
+   real, parameter :: sigq= 0.1
    real, save :: cdd
 end module
 

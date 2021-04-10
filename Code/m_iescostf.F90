@@ -3,29 +3,37 @@ use mod_inistat
 use m_func
 contains
 
-real function jxfunc(x,xf,dpert)
+real function costf(x,xf,q,dpert)
    implicit none
    real, intent(in) :: x
+   real, intent(in) :: q
    real, intent(in) :: xf
    real, intent(in) :: dpert
-   jxfunc=0.5*(x-xf)**2/siga**2 + 0.5*(func(x,0.0)-dpert)**2/sigo**2
-end function jxfunc
+   costf=0.5*(x-xf)**2/siga**2 + 0.5*q**2/sigw**2 + 0.5*(func(x,q)-dpert)**2/sigo**2
+end function costf
 
-real function djxfunc(x,xf,dpert)
+function dcost(x,xf,q,dpert)
    implicit none
+   real dcost(2)
    real, intent(in) :: x
+   real, intent(in) :: q
    real, intent(in) :: xf
    real, intent(in) :: dpert
-   djxfunc=(x-xf)/siga**2 + (func(x,0.0)-dpert)*dfunc(x,0.0)/sigo**2
-   djxfunc=cdd*(x-xf) + (func(x,0.0)-dpert)*dfunc(x,0.0)*siga**2
-end function djxfunc
+   real             :: dg(2)
+   dg=dfunc(x,q)
+   dcost(1)=(x-xf)/siga**2 + (func(x,q)-dpert)*dg(1)/sigo**2
+   dcost(2)=q/sigw**2 + (func(x,q)-dpert)*dg(2)/sigo**2  
+end function dcost
 
-real function ddjxfunc(x,xf,dpert)
+function ddjfunc(x,xf,q,dpert)
    implicit none
+   real ddjfunc(2,2)
    real, intent(in) :: x
+   real, intent(in) :: q
    real, intent(in) :: xf
    real, intent(in) :: dpert
-   ddjxfunc=1.0/siga**2 + dfunc(x,0.0)**2/sigo**2
-end function ddjxfunc
+   ddjfunc=0.0
+ !  ddjxfunc=1.0/siga**2 + dfunc(x,0.0)**2/sigo**2
+end function ddjfunc
 
 end module m_iescostf
