@@ -1,0 +1,38 @@
+ 7        ! exponent of number of samples 10^Z
+#1 Grid for plotting
+-3.0      ! xa
+ 4.0      ! xb
+ 0.0      ! qa
+ 0.0      ! qb
+ -4.0     ! ya
+ 5.0      ! yb
+#2 Statistics
+ 1.0      ! prior estimate of x0
+ 1.0      ! std dev of error in prior estimate
+ -1.0     ! Measurement of y=g(x,q)
+ 1.0      ! std dev of measurement error
+ 0.5      ! model error
+#3 Model
+ 0.3      ! model parameter (beta=0.0, beta=0.2)
+ 0        ! function (0 -> g(x)=x*(1.0 + b*x**2)) 
+#4 Different parameters
+ T        ! Cyyregression active (Should be active for nonlinear models)
+ T        ! adjoints for model sensitivity 
+ F        ! activate pdf printing
+#5 ESMDA parameters
+ T        ! Run ESMDA
+ 32       ! Number of ESMDA steps
+ 1.0      ! ESMDA alphageo (a=1.0 uniform)
+#6 IES parameters
+ F        ! Run IES
+ 2500     ! Maxiesit- max number of IES iterations
+ 0.07     ! gamma_IES
+ 1        ! IESv (1: ESana paper, 3: Matrix version)
+#7 SIES parameters
+ F        ! Run SIES
+ 400      ! Maxiesit- max number of SIES iterations
+ 0.7      ! gamma_SIES  (0.88-1000, 0.80-100, 0.72-10)
+#8 EnSTEIN parameters
+ F        ! Run EnSTEIN
+ 400      ! Maxiesit- max number of EnSTEIN iterations
+ 400      ! istein, number of random samples for averaging gradient
