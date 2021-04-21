@@ -81,32 +81,22 @@ subroutine compute_uncond_jointpdf(esamp)
    real sump
    character(len=40) caseid
    real pdff(nxx,nyy),pdfff(nqq,nxx,nyy), margxx(nxx), margyy(nyy)
-   if (sigw==0.0) then
-      do j=1,nyy
-      do i=1,nxx
-         pdff(i,j)=exp( -0.5*(xx(i)-x0)**2/siga**2                  &
-                        -0.5*(yy(j)-func(xx(i),0.0))**2/sigq**2 )
-      enddo
-      enddo
+   do j=1,nyy
+   do i=1,nxx
+   do k=1,nqq
+      pdfff(k,i,j)=exp( -0.5*(qq(k))**2/sigw**2                  & 
+                        -0.5*(xx(i)-x0)**2/siga**2               &
+                        -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2 )
+   enddo
+   enddo
+   enddo
 
-   elseif (sigw > 0.0) then
-      do j=1,nyy
-      do i=1,nxx
-      do k=1,nqq
-         pdfff(k,i,j)=exp( -0.5*(qq(k))**2/sigw**2                  & 
-                           -0.5*(xx(i)-x0)**2/siga**2               &
-                           -0.5*(yy(j)-func(xx(i),qq(k)))**2/sigq**2 )
-      enddo
-      enddo
-      enddo
-
-      pdff(:,:)=0.0
-      do j=1,nyy
-      do i=1,nxx
-         pdff(i,j)=sum(pdfff(1:nqq,i,j))
-      enddo
-      enddo
-   endif 
+   pdff(:,:)=0.0
+   do j=1,nyy
+   do i=1,nxx
+      pdff(i,j)=sum(pdfff(1:nqq,i,j))
+   enddo
+   enddo
 
    sump=sum(pdff(:,:))*dxx*dyy
    pdff=pdff/sump
@@ -118,6 +108,7 @@ subroutine compute_uncond_jointpdf(esamp)
    call marginalpdf(pdff,margxx,margyy,nxx,nyy,dxx,dyy)
    call tecfunc('margx'//caseid,margxx,xx,nxx,'x','PRIOR')
    call tecfunc('margy'//caseid,margyy,yy,nyy,'y','PRIOR')
+   print '(a)','compute_uncond_jointpdf finished'
 
 end subroutine
 
@@ -167,6 +158,7 @@ subroutine compute_cond_jointpdf(esamp)
    call marginalpdf(pdff,margxx,margyy,nxx,nyy,dxx,dyy)
    call tecfunc('margx'//caseid,margxx,xx,nxx,'x','BAYES')
    call tecfunc('margy'//caseid,margyy,yy,nyy,'y','BAYES')
+   print '(a)','compute_cond_jointpdf finished'
 end subroutine
 
 end module

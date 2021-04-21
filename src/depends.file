@@ -118,6 +118,8 @@ m_normal.o:      makefile
 m_normal.o:      MODEL.CPP
 mod_inistat.o:      makefile
 mod_inistat.o:      MODEL.CPP
+mod_shapiro.o:      makefile
+mod_shapiro.o:      MODEL.CPP
 mod_xyqgrid.o:      makefile
 mod_xyqgrid.o:      m_func.o
 mod_xyqgrid.o:      MODEL.CPP
@@ -160,6 +162,7 @@ m_tecjointpdf.o:      MODEL.CPP
 m_tecmargpdf.o:      makefile
 m_tecmargpdf.o:      m_getcaseid.o
 m_tecmargpdf.o:      MODEL.CPP
+m_tecmargpdf.o:      mod_shapiro.o
 m_tecsampini.o:      makefile
 m_tecsampini.o:      MODEL.CPP
 m_tecstatIES.o:      makefile

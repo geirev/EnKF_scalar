@@ -12,10 +12,10 @@ subroutine tecfunc(fname,y,x,nx,cxvar,czone)
 
    open(10,file=trim(fname)//'.dat',status='unknown')
       write(10,*)'TITLE = "'//trim(fname)//'"'
-      write(10,*)'VARIABLES = "'//trim(cxvar)//'" "Marg pdf"'
+      write(10,*)'VARIABLES = "'//trim(cxvar)//'" "Marg pdf" "Marg pdfsh"'
       write(10,*)'ZONE T= "'//trim(czone)//'" F=POINT, I=',nx
       do i =1,nx
-         write(10,'(2f13.5)')x(i),y(i)
+         write(10,'(3f13.5)')x(i),y(i),y(i)
       enddo
    close(10)
 end subroutine

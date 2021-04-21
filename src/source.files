@@ -19,6 +19,7 @@ MODULES = \
 	m_moments.F90\
 	m_normal.F90\
 	mod_inistat.F90\
+	mod_shapiro.F90\
 	mod_xyqgrid.F90\
 	m_omegafact.F90\
 	m_printcostf.F90\
