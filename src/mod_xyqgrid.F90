@@ -25,56 +25,68 @@ real, save :: dx,dy,dq
 contains
 subroutine xyqgrid()
    integer i,j
+   real yfield(nx,nq)
 
    if (xa==xb) then
       xa=x0 - 5.0*siga
       xb=x0 + 5.0*siga
       print '(a,2f10.4)','xa and xb set to :',xa,xb
    endif
+    
+   dx=(xb-xa)/real(nx-1); print '(a,f12.5)','dx=',dx
+    
+   do i=1,nx
+      x(i)=xa + real(i-1)*dx
+   enddo
 
    if (qa==qb) then
       qa=-5.0*max(sigq,sigw)
       qb= 5.0*max(sigq,sigw)
       print '(a,2f10.4)','qa and qb set to :',qa,qb
    endif
-
-   if (ya==yb) then
-      ya=func(xa,0.0)
-      yb=func(xb,0.0)
-      print '(a,2f10.4)','ya and yb set to :',ya,yb
-   endif
-
-   dx=(xb-xa)/real(nx-1); print '(a,f12.5)','dx=',dx
-   dy=(yb-ya)/real(ny-1); print '(a,f12.5)','dy=',dy
+    
    dq=(qb-qa)/real(nq-1); print '(a,f12.5)','dq=',dq
-
-   do i=1,nx
-      x(i)=xa + real(i-1)*dx
-   enddo
-
-   do j=1,ny
-      y(j)=ya + real(j-1)*dy
-   enddo
-
+    
    do i=1,nq
       q(i)=qa + real(i-1)*dq
    enddo
 
+   if (ya==yb) then
+      do j=1,nq
+      do i=1,nx
+         yfield(i,j)=func(x(i),q(j))
+      enddo
+      enddo
+      ya=minval(yfield)
+      yb=maxval(yfield)
+      print '(a,2f10.4)','ya and yb set to :',ya,yb
+   endif
+    
+   dy=(yb-ya)/real(ny-1); print '(a,f12.5)','dy=',dy
+    
+   do j=1,ny
+      y(j)=ya + real(j-1)*dy
+   enddo
 
+
+! Fine grid for analytic pdfs
    dxx=(xb-xa)/real(nxx-1); print '(a,f12.5)','dxx=',dxx
-   dyy=(yb-ya)/real(nyy-1); print '(a,f12.5)','dyy=',dyy
-   dqq=(qb-qa)/real(nqq-1); print '(a,f12.5)','dqq=',dqq
-
+    
    do i=1,nxx
       xx(i)=xa + real(i-1)*dxx
    enddo
-
+    
+   dqq=(qb-qa)/real(nqq-1); print '(a,f12.5)','dqq=',dqq
+    
+   do i=1,nqq
+      qq(i)=qa + real(i-1)*dqq
+   enddo
+    
+   dyy=(yb-ya)/real(nyy-1); print '(a,f12.5)','dyy=',dyy
+    
    do j=1,nyy
       yy(j)=ya + real(j-1)*dyy
    enddo
 
-   do i=1,nqq
-      qq(i)=qa + real(i-1)*dqq
-   enddo
 end subroutine
 end module
